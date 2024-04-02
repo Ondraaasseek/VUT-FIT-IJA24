@@ -1,10 +1,11 @@
 package ija.ija2023.homework2.room;
 
 import ija.ija2023.homework2.common.Environment;
-import ija.ija2023.homework2.common.Position;
 import ija.ija2023.homework2.common.Robot;
+import ija.ija2023.homework2.tool.common.Position;
+import ija.ija2023.homework2.tool.common.AbstractObservableRobot;
 
-public class ControlledRobot extends Object implements Robot {
+public class ControlledRobot extends AbstractObservableRobot implements Robot {
     Environment env;
     Position pos;
     int angle;
@@ -63,12 +64,29 @@ public class ControlledRobot extends Object implements Robot {
         }
         // move robot
         this.pos = this.getNewPosition();
+        // notify observers
+        this.notifyObservers();
         return true;
     }
 
+    public void turn(int n) {
+        // normalize angle
+        if (n > 0){
+            n = n % 8;
+        } else if (n < 0) {
+            n = 8 + (n % 8);
+        }
+        // turn robot by 45 degrees n times
+        for (int i = 0; i < n; i++) {
+            this.angle = (this.angle + 45) % 360;
+        }
+        // notify observers
+        this.notifyObservers();
+    }
+
     public void turn() {
-        // turn robot by 45 degrees, 
-        this.angle = (this.angle + 45) % 360;
+        // turn robot by 45 degrees
+        this.turn(1);
     }
 
     // private method for getting new position based on the current angle

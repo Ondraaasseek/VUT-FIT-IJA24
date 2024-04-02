@@ -1,13 +1,17 @@
 package ija.ija2023.homework2.room;
 
+import java.util.List;
+
 import ija.ija2023.homework2.common.Environment;
-import ija.ija2023.homework2.common.Position;
 import ija.ija2023.homework2.common.Robot;
+import ija.ija2023.homework2.tool.common.Position;
+import ija.ija2023.homework2.tool.common.ToolRobot;
 
 public class Room extends Object implements Environment {
     int rows;
     int cols;
     char[][] room;
+    List<ToolRobot> robots;
 
     private Room(int rows, int cols) {
         // initialize rows and cols
@@ -52,6 +56,8 @@ public class Room extends Object implements Environment {
         }
         // add robot to the room
         room[robotPosition.getRow()][robotPosition.getCol()] = 'R';
+        // add robot to the list of robots
+        robots.add(robot);
         return true;
     }
 
@@ -111,5 +117,20 @@ public class Room extends Object implements Environment {
         }
         // check if robot is at the position
         return room[p.getRow()][p.getCol()] == 'R';
+    }
+
+    public int rows() {
+        // return number of rows
+        return this.rows;
+    }
+
+    public int cols() {
+        // return number of columns
+        return this.cols;
+    }
+
+    public List<ToolRobot> robots() {
+        // return list of robots
+        return this.robots;
     }
 }
