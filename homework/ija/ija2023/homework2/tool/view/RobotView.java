@@ -17,5 +17,12 @@ public class RobotView extends Object implements ComponentView, Observable.Obser
         // Zpracovává notifikaci o změně v objektu Observable
         this.position = ((ToolRobot) o).getPosition();
         this.angle = ((ToolRobot) o).angle();
+
+        // Reprint of the swing canvas
+        this.repaint();
+    }
+
+    void repaint() {
+
     }
 }
