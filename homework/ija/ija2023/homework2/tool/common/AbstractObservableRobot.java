@@ -10,9 +10,17 @@ public abstract class AbstractObservableRobot extends Object implements ToolRobo
         this.observers = new java.util.ArrayList<Observable.Observer>();
     }
 
-    public void addObserver(Observable.Observer o) {}
+    public void addObserver(Observable.Observer o) {
+        this.observers.add(o);
+    }
 
-    public void removeObserver(Observable.Observer o) {}
+    public void removeObserver(Observable.Observer o) {
+        this.observers.remove(o);
+    }
 
-    public void notifyObservers() {}
+    public void notifyObservers() {
+        for (Observable.Observer o : this.observers) {
+            o.update(this);
+        }
+    }
 }
