@@ -1,6 +1,6 @@
 package ija.ija2023.homework2.tool;
 
-import ija.ija2023.homework2.tool.common.Observable;
+import ija.ija2023.homework2.tool.common.AbstractObservableRobot;
 import ija.ija2023.homework2.tool.common.ToolRobot;
 import ija.ija2023.homework2.tool.common.ToolEnvironment;
 
@@ -16,11 +16,30 @@ public class EnvTester extends Object {
     }
     public List<ToolRobot> checkEmptyNotification(){
         // Ověří, že žádný objekt (view) nebyl notifikován.
-        return this.env.robots();
+        List<ToolRobot> notifiedRobots = new java.util.ArrayList<ToolRobot>();
+        for (ToolRobot robot : this.env.robots()){
+            if (robot instanceof AbstractObservableRobot){
+                AbstractObservableRobot observableRobot = (AbstractObservableRobot) robot;
+                if (observableRobot.notificationCount > 0){
+                    notifiedRobots.add(robot);
+                }
+            }
+        }
+        return notifiedRobots;
     }
 
     public boolean checkNotification(StringBuilder msg, ToolRobot obj){
         // Ověří správný průběh notifikace při akci nad objekty Observable. Observable (robot) informuje (notifikuje) o změně závislé objekty Observer (view, grafická podoba). Ověřuje, zda notifikaci zaslal správný objekt ve správném počtu. Po ověření smaže záznamy o notifikacích.
-        return obj != null;
+        if (!(obj instanceof AbstractObservableRobot)){
+            msg.append("Objekt není typu AbstractObservableRobot.");
+            return false;
+        }
+        AbstractObservableRobot observableRobot = (AbstractObservableRobot) obj;
+        if (observableRobot.notificationCount != observableRobot.observers.size()){
+            msg.append("Robot neinformoval všechny view.");
+            return false;
+        }
+        observableRobot.notificationCount = 0;
+        return true;
     }
 }
