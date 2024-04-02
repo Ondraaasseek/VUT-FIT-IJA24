@@ -11,7 +11,7 @@ public class Room extends Object implements Environment {
     int rows;
     int cols;
     char[][] room;
-    List<ToolRobot> robots;
+    List<ToolRobot> robots = new java.util.ArrayList<ToolRobot>();
 
     private Room(int rows, int cols) {
         // initialize rows and cols
@@ -131,6 +131,6 @@ public class Room extends Object implements Environment {
 
     public List<ToolRobot> robots() {
         // return list of robots
-        return this.robots;
+        return
     }
 }

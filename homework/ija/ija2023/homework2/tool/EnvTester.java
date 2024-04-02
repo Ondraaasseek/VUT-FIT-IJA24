@@ -9,13 +9,14 @@ import java.util.List;
 public class EnvTester extends Object {
 
     private final ToolEnvironment env;
+
     public EnvTester(ToolEnvironment env){
         // Konstruktor inicializující MazeTester.
         this.env = env;
     }
     public List<ToolRobot> checkEmptyNotification(){
         // Ověří, že žádný objekt (view) nebyl notifikován.
-        return null;
+        return this.env.robots();
     }
 
     public boolean checkNotification(StringBuilder msg, ToolRobot obj){
