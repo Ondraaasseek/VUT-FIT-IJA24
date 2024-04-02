@@ -1,4 +1,4 @@
-package ija.ija2023.homework1.common;
+package ija.ija2023.homework2.common;
 
 public interface Robot {
     void turn();
