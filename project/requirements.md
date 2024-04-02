@@ -9,9 +9,19 @@ Priorita: 5 -> Nejvyšší priorita
 
 ## Seznam požadavků
 
-| Priorita | Popis požadavku |           Přiděleno           |            Splněno             |
-|:--------:|:---------------:|:-----------------------------:|:------------------------------:|
-|    5     |  View Classes   |        Ondřej Novotný         | <input type=checkbox checked>  |
-|    5     |     Common      |         Lukáš Katona          | <input type=checkbox checked>  | 
-|    5     |   Env Classes   |        Ondřej Novotný         |  <input type=checkbox checked> |
-|    5     | File structure  | Ondřej Novotný & Lukáš Katona |  <input type=checkbox checked> |
+| Priorita | Popis požadavku         |           Přiděleno           |            Splněno            |
+|:--------:|:-----------------------:|:-----------------------------:|:-----------------------------:|
+|    5     | File structure          | Ondřej Novotný & Lukáš Katona | <input type=checkbox checked> |
+|    5     | ComponentView           |        Ondřej Novotný         | <input type=checkbox >        | 
+|    5     | FieldView               |        Ondřej Novotný         | <input type=checkbox >        |
+|    5     | RobotView               |        Ondřej Novotný         | <input type=checkbox >        |
+|    5     | EnvPresenter            |        Ondřej Novotný         | <input type=checkbox >        |
+|    5     | EnvTester               |        Ondřej Novotný         | <input type=checkbox >        |
+|    5     | ToolRobot               |         Lukáš Katona          | <input type=checkbox checked> |
+|    5     | ToolEnvironment         |         Lukáš Katona          | <input type=checkbox checked> |
+|    5     | Position                |         Lukáš Katona          | <input type=checkbox checked> |
+|    5     | Observable              |         Lukáš Katona          | <input type=checkbox checked> |
+|    5     | Observer                |         Lukáš Katona          | <input type=checkbox checked> |
+|    5     | AbstractObservableRobot |         Lukáš Katona          | <input type=checkbox checked> |
+|    5     | Edit older files        |         Lukáš Katona          | <input type=checkbox checked> |
+
