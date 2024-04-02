@@ -2,24 +2,28 @@ package ija.ija2023.homework2.tool.common;
 
 import java.util.List;
 
+import ija.ija2023.homework2.tool.view.RobotView;
+
 public abstract class AbstractObservableRobot extends Object implements ToolRobot {
 
-    List<Observable.Observer> observers;
+    public List<RobotView> observers;
+    public int notificationCount = 0;
 
     public AbstractObservableRobot() {
-        this.observers = new java.util.ArrayList<Observable.Observer>();
+        this.observers = new java.util.ArrayList<RobotView>();
     }
 
     public void addObserver(Observable.Observer o) {
-        this.observers.add(o);
+        this.observers.add((RobotView)o);
     }
 
     public void removeObserver(Observable.Observer o) {
-        this.observers.remove(o);
+        this.observers.remove((RobotView)o);
     }
 
     public void notifyObservers() {
-        for (Observable.Observer o : this.observers) {
+        for (RobotView o : this.observers) {
+            notificationCount++;
             o.update(this);
         }
     }
