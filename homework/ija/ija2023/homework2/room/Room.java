@@ -6,6 +6,7 @@ import ija.ija2023.homework2.common.Environment;
 import ija.ija2023.homework2.common.Robot;
 import ija.ija2023.homework2.tool.common.Position;
 import ija.ija2023.homework2.tool.common.ToolRobot;
+import ija.ija2023.homework2.tool.view.RobotView;
 
 public class Room extends Object implements Environment {
     int rows;
@@ -58,6 +59,8 @@ public class Room extends Object implements Environment {
         room[robotPosition.getRow()][robotPosition.getCol()] = 'R';
         // add robot to the list of robots
         robots.add(robot);
+        // add observer to the robot
+        robot.addObserver(new RobotView());
         return true;
     }
 
@@ -130,7 +133,7 @@ public class Room extends Object implements Environment {
     }
 
     public List<ToolRobot> robots() {
-        // return list of robots
-        return
+        // return new list of robots
+        return new java.util.ArrayList<ToolRobot>(robots);
     }
 }
