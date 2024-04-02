@@ -12,6 +12,6 @@ Priorita: 5 -> Nejvyšší priorita
 | Priorita | Popis požadavku |           Přiděleno           |            Splněno             |
 |:--------:|:---------------:|:-----------------------------:|:------------------------------:|
 |    5     |  View Classes   |        Ondřej Novotný         | <input type=checkbox checked>  |
-|    5     |     Common      | Lukáš Katona & Ondřej Novotný | <input type=checkbox checked>  | 
-|    5     |   Env Classes   |         Lukáš Katona          |  <input type=checkbox checked> |
-|    5     | File structure  |        Ondřej Novotný         |  <input type=checkbox checked> |
+|    5     |     Common      |         Lukáš Katona          | <input type=checkbox checked>  | 
+|    5     |   Env Classes   |        Ondřej Novotný         |  <input type=checkbox checked> |
+|    5     | File structure  | Ondřej Novotný & Lukáš Katona |  <input type=checkbox checked> |
