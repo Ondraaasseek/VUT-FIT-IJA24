@@ -1,4 +1,4 @@
-package ija.ija2023.homework1.common;
+package ija.ija2023.homework2.tool.common;
 
 public class Position extends Object {
     int row;
