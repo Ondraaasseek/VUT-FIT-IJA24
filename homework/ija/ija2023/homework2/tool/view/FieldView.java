@@ -1,5 +1,9 @@
 package ija.ija2023.homework2.tool.view;
 
-public class FieldView extends JPanel {
 
+import javax.swing.JPanel;
+public class FieldView extends JPanel {
+    public FieldView() {
+        super();
+    }
 }
