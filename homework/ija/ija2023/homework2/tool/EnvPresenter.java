@@ -19,7 +19,7 @@ public class EnvPresenter {
     public EnvPresenter(ToolEnvironment env){
         // Constructor initializes the Presenter
         // ENV -> Environment that is being presented
-    this.env = (Environment) env;
+        this.env = (Environment) env;
     }
 
     FieldView fieldAt(Position pos){
@@ -30,32 +30,6 @@ public class EnvPresenter {
 
     public void open() {
         // Create the main frame
-
-        repaint();
-
-        // Set the properties of the main frame
-        frame.setSize(env.cols() * 100, env.rows() * 100); // Set the size of the frame
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Set the close operation
-
-        // Open the GUI by making the main frame visible
-        frame.setVisible(true);
-
-        while (true) {
-            // Repaint the GUI
-            repaint();
-            // Wait for 1 second
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public  void repaint() {
-        // Repaint the GUI
-
-        JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(env.rows(), env.cols()));
         // Iterate over the grid
         for (int i = 0; i < env.rows(); i++) {
@@ -64,7 +38,7 @@ public class EnvPresenter {
                 Position currentPosition = new Position(i, j);
 
                 // Check if there is a robot at the current position
-                ToolRobot robotView = env.robotViews().stream()
+                RobotView robotView = env.robotViews().stream()
                         .filter(r -> r.position.equals(currentPosition))
                         .findFirst()
                         .orElse(null);
@@ -72,9 +46,7 @@ public class EnvPresenter {
                 if (robotView != null) {
                     // If there is a robot, create a RobotView
                     FieldView robotField = new FieldView();
-                    robotField.addRobot(robotView);
-                    robotField.paintComponent(field.getGraphics());
-                    field.setBackground(Color.CYAN);
+                    robotField.paintComponent(field.getGraphics(), robotView);
                 } else if (env.obstacleAt(currentPosition)) {
                     // If there is an obstacle, set the background to gray
                     field = new JPanel();
@@ -91,7 +63,28 @@ public class EnvPresenter {
 
         // Add the components to the main frame
         frame.add(panel);
-
+        // Set the properties of the main frame
         frame.setSize(env.cols() * 100, env.rows() * 100); // Set the size of the frame
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Set the close operation
+
+        // Open the GUI by making the main frame visible
+        frame.setVisible(true);
+    }
+
+    public static void repaint(Position OldPos, RobotView robotView) {
+        // Repaint the GUI
+
+        // Remove the robot from the old position
+        System.out.println("Removing robot from position:" + OldPos);
+        // Remove the cell from the grid on the OldPos from the panel.
+
+
+
+
+        System.out.println("Repainting for robot: " + robotView.position + " angle:" + robotView.angle);
+        // Add the robot to the new position using robotField.paintComponent
+        // Add the cell to the grid on the robotView.position to the panel.
+
+
     }
 }

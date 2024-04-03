@@ -140,4 +140,9 @@ public class Room extends Object implements Environment {
         // return new list of robots
         return new java.util.ArrayList<ToolRobot>(robots);
     }
+
+    public List<RobotView> robotViews() {
+        // return new list of robot views
+        return this.robotViews;
+    }
 }
