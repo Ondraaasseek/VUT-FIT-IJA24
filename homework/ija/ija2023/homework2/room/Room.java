@@ -13,6 +13,7 @@ public class Room extends Object implements Environment {
     int cols;
     char[][] room;
     List<ToolRobot> robots = new java.util.ArrayList<ToolRobot>();
+    List<RobotView> robotViews = new java.util.ArrayList<RobotView>();
 
     private Room(int rows, int cols) {
         // initialize rows and cols
@@ -60,7 +61,9 @@ public class Room extends Object implements Environment {
         // add robot to the list of robots
         robots.add(robot);
         // add observer to the robot
-        robot.addObserver(new RobotView());
+        RobotView robotView = new RobotView();
+        robot.addObserver(robotView);
+        robotViews.add(robotView);
         return true;
     }
 
