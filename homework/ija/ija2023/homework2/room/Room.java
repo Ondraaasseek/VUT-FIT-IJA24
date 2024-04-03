@@ -1,3 +1,8 @@
+/* @file Room.java
+ * @brief Class for Environment
+ * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.homework2.room;
 
 import java.util.List;
@@ -123,7 +128,30 @@ public class Room extends Object implements Environment {
             return false;
         }
         // check if robot is at the position
-        return room[p.getRow()][p.getCol()] == 'R';
+        for(ToolRobot robot : robots) {
+            if (robot.getPosition().equals(p)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ToolRobot getRobotFromPosition(Position p) {
+        // check if position is null
+        if (p == null) {
+            return null;
+        }
+        // check if position is within the room
+        if (!this.containsPosition(p)) {
+            return null;
+        }
+        // check if robot is at the position
+        for(ToolRobot robot : robots) {
+            if (robot.getPosition().equals(p)) {
+                return robot;
+            }
+        }
+        return null;
     }
 
     public int rows() {

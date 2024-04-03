@@ -1,3 +1,8 @@
+/* @file EnvTester.java
+ * @brief Class for EnvTester
+ * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.homework2.tool;
 
 import ija.ija2023.homework2.tool.common.AbstractObservableRobot;

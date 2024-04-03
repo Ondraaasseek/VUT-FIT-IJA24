@@ -1,3 +1,8 @@
+/* @file EnvPresenter.java
+ * @brief Class for EnvPresenter
+ * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.homework2.tool;
 
 import ija.ija2023.homework2.common.Environment;
@@ -5,16 +10,15 @@ import ija.ija2023.homework2.tool.common.ToolRobot;
 import ija.ija2023.homework2.tool.view.FieldView;
 import ija.ija2023.homework2.tool.common.Position;
 import ija.ija2023.homework2.tool.common.ToolEnvironment;
-import ija.ija2023.homework2.tool.view.RobotView;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class EnvPresenter {
 
-    Environment env;
-    JFrame frame = new JFrame("Roboti a Kameny");
-    FieldView panel = new FieldView();
+    static Environment env;
+    static JFrame frame = new JFrame("Roboti a Kameny");
+    static FieldView panel = new FieldView();
 
     public EnvPresenter(ToolEnvironment env){
         // Constructor initializes the Presenter
@@ -25,7 +29,7 @@ public class EnvPresenter {
     FieldView fieldAt(Position pos){
         // Returns the FieldView at the given position
         // Display Robots and Obstacles on pos
-        return new FieldView();
+        return panel;
     }
 
     public void open() {
@@ -37,23 +41,32 @@ public class EnvPresenter {
                 JPanel field = new JPanel();
                 Position currentPosition = new Position(i, j);
 
-                // Check if there is a robot at the current position
-                RobotView robotView = env.robotViews().stream()
-                        .filter(r -> r.position.equals(currentPosition))
-                        .findFirst()
-                        .orElse(null);
+                if (env.obstacleAt(currentPosition)) {
+                    // If there is an obstacle, Draw for each obstacle gray 100 x 100 rectangle
+                    field = new JPanel() {
+                        @Override
+                        protected void paintComponent(Graphics g) {
+                            super.paintComponent(g);
+                            g.setColor(Color.GRAY);
+                            g.fillRect(0, 0, this.getWidth(), this.getHeight());
+                        }
+                    };
+                    field.setPreferredSize(new Dimension(100, 100)); // Set the preferred size of the JPanel
+                }
 
-                if (robotView != null) {
-                    // If there is a robot, create a RobotView
-                    FieldView robotField = new FieldView();
-                    robotField.paintComponent(field.getGraphics(), robotView);
-                } else if (env.obstacleAt(currentPosition)) {
-                    // If there is an obstacle, set the background to gray
-                    field = new JPanel();
-                    field.setBackground(Color.GRAY);
-                } else {
-                    // Otherwise, create a new FieldView
-                    field = new JPanel();
+                if (env.robotAt(currentPosition)) {
+                    // If there is a robot, Draw for each robot a cyan 50 x 50 circle
+                    field = new JPanel() {
+                        @Override
+                        protected void paintComponent(Graphics g) {
+                            super.paintComponent(g);
+                            g.setColor(Color.CYAN);
+                            g.fillOval(0, 0, 70, 70);
+                            g.setColor(Color.BLACK);
+                            g.fillOval(30, 0, 10, 10);
+                        }
+                    };
+                    field.setPreferredSize(new Dimension(100, 100)); // Set the preferred size of the JPanel
                 }
 
                 // Add the FieldView or RobotView to the panel
@@ -63,28 +76,111 @@ public class EnvPresenter {
 
         // Add the components to the main frame
         frame.add(panel);
+
+        panel.repaint();
+
         // Set the properties of the main frame
-        frame.setSize(env.cols() * 100, env.rows() * 100); // Set the size of the frame
+        frame.setSize((env.cols() * 100), (env.rows() * 100)); // Set the size of the frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Set the close operation
+        frame.setAlwaysOnTop(true); // Make the frame always on top
 
         // Open the GUI by making the main frame visible
         frame.setVisible(true);
     }
 
-    public static void repaint(Position OldPos, RobotView robotView) {
+    public static void repaint() {
         // Repaint the GUI
+        if (env == null) {
+            return;
+        }
+        panel.removeAll();
+        panel.setLayout(new GridLayout(env.rows(), env.cols()));
+        // Iterate over the grid
+        for (int i = 0; i < env.rows(); i++) {
+            for (int j = 0; j < env.cols(); j++) {
+                JPanel field = new JPanel();
+                Position currentPosition = new Position(i, j);
 
-        // Remove the robot from the old position
-        System.out.println("Removing robot from position:" + OldPos);
-        // Remove the cell from the grid on the OldPos from the panel.
+                if (env.obstacleAt(currentPosition)) {
+                    // If there is an obstacle, Draw for each obstacle gray 100 x 100 rectangle
+                    field = new JPanel() {
+                        @Override
+                        protected void paintComponent(Graphics g) {
+                            super.paintComponent(g);
+                            g.setColor(Color.GRAY);
+                            g.fillRect(0, 0, this.getWidth(), this.getHeight());
+                        }
+                    };
+                    field.setPreferredSize(new Dimension(100, 100)); // Set the preferred size of the JPanel
+                }
 
+                if (env.robotAt(currentPosition)) {
+                    // If there is a robot, Draw for each robot a cyan 50 x 50 circle
+                    field = new JPanel() {
+                        @Override
+                        protected void paintComponent(Graphics g) {
+                            super.paintComponent(g);
+                            g.setColor(Color.CYAN);
+                            g.fillOval(0, 0, 70, 70);
+                            ToolRobot robot = env.getRobotFromPosition(currentPosition);
+                            if (robot == null) {
+                                return;
+                            }
+                            switch (robot.angle()) {
+                                case 0:
+                                    g.setColor(Color.BLACK);
+                                    g.fillOval(30, 0, 10, 10);
+                                    break;
 
+                                case 45:
+                                    g.setColor(Color.BLACK);
+                                    g.fillOval(50, 10, 10, 10);
+                                    break;
+                                case 90:
+                                    g.setColor(Color.BLACK);
+                                    g.fillOval(60, 30, 10, 10);
+                                    break;
+                                case 135:
+                                    g.setColor(Color.BLACK);
+                                    g.fillOval(50, 50, 10, 10);
+                                    break;
+                                case 180:
+                                    g.setColor(Color.BLACK);
+                                    g.fillOval(30, 60, 10, 10);
+                                    break;
+                                case 225:
+                                    g.setColor(Color.BLACK);
+                                    g.fillOval(10, 50, 10, 10);
+                                    break;
+                                case 270:
+                                    g.setColor(Color.BLACK);
+                                    g.fillOval(0, 30, 10, 10);
+                                    break;
+                                case 315:
+                                    g.setColor(Color.BLACK);
+                                    g.fillOval(10, 10, 10, 10);
+                                    break;
+                                default:
+                                    g.setColor(Color.BLACK);
+                                    g.fillOval(30, 0, 10, 10);
+                            }
+                        }
+                    };
+                    field.setPreferredSize(new Dimension(100, 100)); // Set the preferred size of the JPanel
+                }
 
+                // Add the FieldView or RobotView to the panel
+                panel.add(field);
 
-        System.out.println("Repainting for robot: " + robotView.position + " angle:" + robotView.angle);
-        // Add the robot to the new position using robotField.paintComponent
-        // Add the cell to the grid on the robotView.position to the panel.
+                panel.repaint();
 
+                frame.setSize((env.cols() * 100), (env.rows() * 100)); // Set the size of the frame
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Set the close operation
+                frame.setAlwaysOnTop(true); // Make the frame always on top
 
+                // Open the GUI by making the main frame visible
+                frame.setVisible(true);
+            }
+        }
     }
 }

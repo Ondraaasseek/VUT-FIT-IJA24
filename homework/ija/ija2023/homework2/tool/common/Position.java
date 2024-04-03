@@ -1,3 +1,8 @@
+/* @file Position.java
+ * @brief Class for Position
+ * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.homework2.tool.common;
 
 public class Position extends Object {

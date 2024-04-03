@@ -19,6 +19,6 @@ public class RobotView extends Object implements ComponentView, Observable.Obser
         Position oldPos = this.position;
         this.position = ((ToolRobot) o).getPosition();
         this.angle = ((ToolRobot) o).angle();
-        EnvPresenter.repaint(oldPos, this);
+        EnvPresenter.repaint();
     }
 }

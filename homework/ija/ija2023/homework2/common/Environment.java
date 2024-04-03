@@ -1,7 +1,13 @@
+/* @file Environment.java
+ * @brief Interface for Environment
+ * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.homework2.common;
 
 import ija.ija2023.homework2.tool.common.Position;
 import ija.ija2023.homework2.tool.common.ToolEnvironment;
+import ija.ija2023.homework2.tool.common.ToolRobot;
 import ija.ija2023.homework2.tool.view.RobotView;
 
 import java.util.List;
@@ -10,6 +16,7 @@ public interface Environment extends ToolEnvironment {
     boolean createObstacleAt(int row, int col);
     boolean obstacleAt(int row, int col);
     boolean robotAt(Position p);
+    public ToolRobot getRobotFromPosition(Position p);
     boolean containsPosition(Position pos);
     List<RobotView> robotViews();
 }

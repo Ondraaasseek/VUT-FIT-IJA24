@@ -1,3 +1,8 @@
+/* @file Robot.java
+ * @brief Interface for Robot
+ * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.homework2.common;
 
 import ija.ija2023.homework2.tool.common.Position;
