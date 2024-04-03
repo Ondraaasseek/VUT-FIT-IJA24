@@ -1,9 +1,11 @@
 package ija.ija2023.homework2.tool;
 
 import ija.ija2023.homework2.common.Environment;
+import ija.ija2023.homework2.tool.common.ToolRobot;
 import ija.ija2023.homework2.tool.view.FieldView;
 import ija.ija2023.homework2.tool.common.Position;
 import ija.ija2023.homework2.tool.common.ToolEnvironment;
+import ija.ija2023.homework2.tool.view.RobotView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +13,8 @@ import java.awt.*;
 public class EnvPresenter {
 
     Environment env;
-    JPanel panel;
+    JFrame frame = new JFrame("Roboti a Kameny");
+    FieldView panel = new FieldView();
 
     public EnvPresenter(ToolEnvironment env){
         // Constructor initializes the Presenter
@@ -27,39 +30,53 @@ public class EnvPresenter {
 
     public void open() {
         // Create the main frame
-        JFrame frame = new JFrame("Roboti a Kameny");
 
-        // Initialize the GUI components
-        JPanel panel = new JPanel(new GridLayout(env.rows(), env.cols()));
+        repaint();
 
-        // Initialize Robot Field 3x3 FieldView with 0 1 -> Black
-        JPanel robotEye = new JPanel(new GridLayout(2, 2));
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
-                FieldView robotField = new FieldView();
-                robotField.setBackground(Color.BLACK);
-                robotEye.add(robotField);
-            }
-        }
+        // Set the properties of the main frame
+        frame.setSize(env.cols() * 100, env.rows() * 100); // Set the size of the frame
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Set the close operation
 
+        // Open the GUI by making the main frame visible
+        frame.setVisible(true);
+    }
 
+    public  void repaint() {
+        // Repaint the GUI
 
-
-
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(env.rows(), env.cols()));
         // Iterate over the grid
         for (int i = 0; i < env.rows(); i++) {
             for (int j = 0; j < env.cols(); j++) {
-                // Create a new FieldView
-                FieldView field = new FieldView();
+                JPanel field = new JPanel();
+                Position currentPosition = new Position(i, j);
 
-                if (env.obstacleAt(new Position(i, j))) {
-                    field.setBackground(Color.GRAY);
-                }
+                // Check if there is a robot at the current position
+                ToolRobot robot = env.robots().stream()
+                        .filter(r -> r.getPosition().equals(currentPosition))
+                        .findFirst()
+                        .orElse(null);
 
-                if (env.robotAt(new Position(i, j))) {
+                if (robot != null) {
+                    // If there is a robot, create a RobotView
+                    RobotView robotView = new RobotView();
+                    robotView.position = robot.getPosition();
+                    robotView.angle = robot.angle();
+                    FieldView robotField = new FieldView();
+                    robotField.addRobot(robot);
+                    robotField.paintComponent(field.getGraphics());
                     field.setBackground(Color.CYAN);
+                } else if (env.obstacleAt(currentPosition)) {
+                    // If there is an obstacle, set the background to gray
+                    field = new JPanel();
+                    field.setBackground(Color.GRAY);
+                } else {
+                    // Otherwise, create a new FieldView
+                    field = new JPanel();
                 }
-                // Add the FieldView to the panel
+
+                // Add the FieldView or RobotView to the panel
                 panel.add(field);
             }
         }
@@ -67,11 +84,6 @@ public class EnvPresenter {
         // Add the components to the main frame
         frame.add(panel);
 
-        // Set the properties of the main frame
-        frame.setSize(800, 600); // Set the size of the frame
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Set the close operation
-
-        // Open the GUI by making the main frame visible
-        frame.setVisible(true);
+        frame.setSize(env.cols() * 100, env.rows() * 100); // Set the size of the frame
     }
 }
