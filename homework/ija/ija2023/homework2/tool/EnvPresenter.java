@@ -39,6 +39,17 @@ public class EnvPresenter {
 
         // Open the GUI by making the main frame visible
         frame.setVisible(true);
+
+        while (true) {
+            // Repaint the GUI
+            repaint();
+            // Wait for 1 second
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public  void repaint() {
@@ -53,18 +64,15 @@ public class EnvPresenter {
                 Position currentPosition = new Position(i, j);
 
                 // Check if there is a robot at the current position
-                ToolRobot robot = env.robots().stream()
-                        .filter(r -> r.getPosition().equals(currentPosition))
+                ToolRobot robotView = env.robotViews().stream()
+                        .filter(r -> r.position.equals(currentPosition))
                         .findFirst()
                         .orElse(null);
 
-                if (robot != null) {
+                if (robotView != null) {
                     // If there is a robot, create a RobotView
-                    RobotView robotView = new RobotView();
-                    robotView.position = robot.getPosition();
-                    robotView.angle = robot.angle();
                     FieldView robotField = new FieldView();
-                    robotField.addRobot(robot);
+                    robotField.addRobot(robotView);
                     robotField.paintComponent(field.getGraphics());
                     field.setBackground(Color.CYAN);
                 } else if (env.obstacleAt(currentPosition)) {

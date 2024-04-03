@@ -62,6 +62,7 @@ public class Room extends Object implements Environment {
         robots.add(robot);
         // add observer to the robot
         RobotView robotView = new RobotView();
+        robotView.position = robot.getPosition();
         robot.addObserver(robotView);
         robotViews.add(robotView);
         return true;

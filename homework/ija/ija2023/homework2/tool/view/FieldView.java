@@ -16,11 +16,9 @@ public class FieldView extends JPanel {
 
     }
 
-    public void addRobot(ToolRobot robot) {
+    public void addRobot(RobotView robot) {
         // Adds a robot to the FieldView
-        this.robot = new RobotView();
-        this.robot.position = robot.getPosition();
-        this.robot.angle = robot.angle();
+        this.robot = robot;
     }
 
     public void paintComponent(Graphics g) {
