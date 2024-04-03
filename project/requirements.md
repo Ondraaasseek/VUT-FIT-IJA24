@@ -13,26 +13,27 @@ Priority:
 
 ## Seznam požadavků
 
-| Priorita |         Popis požadavku         |           Přiděleno           |            Splněno            | Datum splnění |
-|:--------:|:-------------------------------:|:-----------------------------:|:-----------------------------:|:-------------:|
-|    5     |       ~~File structure~~        | Ondřej Novotný & Lukáš Katona | <input type=checkbox checked> | 2 / 4 / 2024  |
-|    5     |        ~~ComponentView~~        |        Ondřej Novotný         | <input type=checkbox checked> | 2 / 4 / 2024  |
-|    3     |            FieldView            |        Ondřej Novotný         |    <input type=checkbox >     |               | 
-|    5     |          ~~RobotView~~          |        Ondřej Novotný         | <input type=checkbox checked> | 2 / 4 / 2024  |
-|    2     |          EnvPresenter           |        Ondřej Novotný         |    <input type=checkbox >     |               |
-|    5     |          ~~EnvTester~~          |        Ondřej Novotný         | <input type=checkbox checked> | 2 / 4 / 2024  |
-|    5     |          ~~ToolRobot~~          |         Lukáš Katona          | <input type=checkbox checked> | 2 / 4 / 2024  |
-|    5     |       ~~ToolEnvironment~~       |         Lukáš Katona          | <input type=checkbox checked> | 2 / 4 / 2024  |
-|    5     |          ~~Position~~           |         Lukáš Katona          | <input type=checkbox checked> | 2 / 4 / 2024  |
-|    5     |         ~~Observable~~          |         Lukáš Katona          | <input type=checkbox checked> | 2 / 4 / 2024  |
-|    5     |          ~~Observer~~           |         Lukáš Katona          | <input type=checkbox checked> | 2 / 4 / 2024  |
-|    5     |   ~~AbstractObservableRobot~~   |         Lukáš Katona          | <input type=checkbox checked> | 2 / 4 / 2024  |
-|    5     |      ~~Edit older files~~       |         Lukáš Katona          | <input type=checkbox checked> | 2 / 4 / 2024  |  
-|    4     |        Set robots in gui        |        Ondřej Novotný         |    <input type=checkbox >     |               |
-|    2     |       Save robots to file       |        Ondřej Novotný         |    <input type=checkbox >     |               |
-|    4     |      Load robots from file      |        Ondřej Novotný         |    <input type=checkbox >     |               |
-|    5     |    Create autonomous robots     |         Lukáš Katona          |    <input type=checkbox >     |               |
-|    1     | Add simulation pause and resume |         Lukáš Katona          |    <input type=checkbox >     |               |
-|    2     |   Create timing handlers etc.   |         Lukáš Katona          |    <input type=checkbox >     |               |
-|    3     | Add robot statistics / logging  | Ondřej Novotný & Lukáš Katona |    <input type=checkbox >     |               |
-|    1     |        Simulation replay        | Ondřej Novotný & Lukáš Katona |    <input type=checkbox >     |               |
+| Priorita |         Popis požadavku         |           Přiděleno           |       Splněno        | Datum splnění |
+|:--------:|:-------------------------------:|:-----------------------------:|:--------------------:|:-------------:|
+|    5     |       ~~File structure~~        | Ondřej Novotný & Lukáš Katona |  :heavy_check_mark:  | 2 / 4 / 2024  |
+|    5     |        ~~ComponentView~~        |        Ondřej Novotný         |  :heavy_check_mark:  | 2 / 4 / 2024  |
+|    3     |          ~~FieldView~~          |        Ondřej Novotný         |  :heavy_check_mark:  | 3 / 4 / 2024  | 
+|    5     |          ~~RobotView~~          |        Ondřej Novotný         |  :heavy_check_mark:  | 2 / 4 / 2024  |
+|    2     |        ~~EnvPresenter~~         |        Ondřej Novotný         |  :heavy_check_mark:  | 3 / 4 / 2024  |
+|    5     |          ~~EnvTester~~          |        Ondřej Novotný         |  :heavy_check_mark:  | 2 / 4 / 2024  |
+|    5     |          ~~ToolRobot~~          |         Lukáš Katona          |  :heavy_check_mark:  | 2 / 4 / 2024  |
+|    5     |       ~~ToolEnvironment~~       |         Lukáš Katona          |  :heavy_check_mark:  | 2 / 4 / 2024  |
+|    5     |          ~~Position~~           |         Lukáš Katona          |  :heavy_check_mark:  | 2 / 4 / 2024  |
+|    5     |         ~~Observable~~          |         Lukáš Katona          |  :heavy_check_mark:  | 2 / 4 / 2024  |
+|    5     |          ~~Observer~~           |         Lukáš Katona          |  :heavy_check_mark:  | 2 / 4 / 2024  |
+|    5     |   ~~AbstractObservableRobot~~   |         Lukáš Katona          |  :heavy_check_mark:  | 2 / 4 / 2024  |
+|    5     |      ~~Edit older files~~       |         Lukáš Katona          |  :heavy_check_mark:  | 2 / 4 / 2024  |  
+|    4     |        Set robots in gui        |        Ondřej Novotný         |  :white_check_mark:  |               |
+|    2     |       Save robots to file       |        Ondřej Novotný         |  :white_check_mark:  |               |
+|    4     |      Load robots from file      |        Ondřej Novotný         |  :white_check_mark:  |               |
+|    5     |    Create autonomous robots     |         Lukáš Katona          |  :white_check_mark:  |               |
+|    1     | Add simulation pause and resume |         Lukáš Katona          |  :white_check_mark:  |               |
+|    2     |   Create timing handlers etc.   |         Lukáš Katona          |  :white_check_mark:  |               |
+|    3     | Add robot statistics / logging  | Ondřej Novotný & Lukáš Katona |  :white_check_mark:  |               |
+|    1     |        Simulation replay        | Ondřej Novotný & Lukáš Katona |  :white_check_mark:  |               |
+|    2     |   ~~Author on top of files~~    | Ondřej Novotný & Lukáš Katona |  :heavy_check_mark:  | 3 / 4 / 2024  |
