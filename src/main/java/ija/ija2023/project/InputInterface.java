@@ -11,19 +11,77 @@ public class InputInterface extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Robot Simulation");
-        TextField textField1 = new TextField();
-        TextField textField2 = new TextField();
-        TextField textField3 = new TextField();
-        Button button1 = new Button("Load file");
-        Button button2 = new Button("Start simulation");
+        Button button1 = new Button("Load from file");
+        Button button2 = new Button("Create new environment");
 
-        VBox vbox = new VBox(textField1, textField2, textField3, button1, button2);
+        VBox vbox = new VBox(button1, button2);
         Scene scene = new Scene(vbox, 300, 200);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // This is the main method of the project that runs the application and initializes the main window.
-        // It also handles file loading and storing.
+        button1.setOnAction(e -> {
+            System.out.println("Load from file");
+            // TODO Load from file
+        });
 
+        button2.setOnAction(e -> {
+            // Display new window for creating new environment with the following fields:
+            // - Width
+            // - Height
+            Stage NewEnvStage = new Stage();
+            NewEnvStage.setTitle("Create new environment");
+            TextField widthField = new TextField();
+            TextField heightField = new TextField();
+            Button createButton = new Button("Create");
+            Button cancelButton = new Button("Cancel");
+
+            VBox newEnvVbox = new VBox(widthField, heightField, createButton, cancelButton);
+            Scene newEnvScene = new Scene(newEnvVbox, 300, 200);
+            NewEnvStage.setScene(newEnvScene);
+            // Close the old windows
+            primaryStage.close();
+            NewEnvStage.show();
+
+            cancelButton.setOnAction(e2 -> {
+                NewEnvStage.close();
+                primaryStage.show();
+            });
+
+            createButton.setOnAction(e2 -> {
+                // Check if the input fields are int
+                boolean valid = true;
+                int width = 0;
+                int height = 0;
+                try {
+                    width = Integer.parseInt(widthField.getText());
+                    if (width < 1) {
+                        throw new Exception("Width out of range.");
+                    }
+                } catch (Exception ex) {
+                    widthField.setText("Invalid input.");
+                    System.out.println("Exception " + ex.getMessage());
+                    valid = false;
+                }
+
+                try {
+                    height = Integer.parseInt(heightField.getText());
+                    if (height < 1) {
+                        throw new Exception("Height out of range.");
+                    }
+                } catch (Exception ex) {
+                    heightField.setText("Invalid input.");
+                    System.out.println("Exception " + ex.getMessage());
+                    valid = false;
+                }
+
+                if (!valid) {
+                    return;
+                }
+                // Call EnvCreator with the width and height
+                NewEnvStage.close();
+                EnvCreator.start(width, height);
+
+            });
+        });
     }
 }
