@@ -1,6 +1,7 @@
 package ija.ija2023.project;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
@@ -16,6 +17,8 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 public class InputInterface extends Application {
     @Override
@@ -120,6 +123,24 @@ public class InputInterface extends Application {
                 NewEnvStage.close();
                 EnvCreator.start(width, height);
 
+            });
+
+            widthField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (newValue && widthField.getText().equals("Invalid input.")) {
+                        widthField.setText("");
+                    }
+                }
+            });
+
+            heightField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (newValue && heightField.getText().equals("Invalid input.")) {
+                        heightField.setText("");
+                    }
+                }
             });
         });
     }
