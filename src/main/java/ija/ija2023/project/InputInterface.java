@@ -1,5 +1,9 @@
 package ija.ija2023.project;
 
+import ija.ija2023.project.common.Robot;
+import ija.ija2023.project.room.ControlledRobot;
+import ija.ija2023.project.room.Room;
+import ija.ija2023.project.tool.common.Position;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
@@ -7,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -19,6 +24,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.IOException;
 
 public class InputInterface extends Application {
     @Override
@@ -37,8 +47,71 @@ public class InputInterface extends Application {
         primaryStage.show();
 
         button1.setOnAction(e -> {
-            System.out.println("Load from file");
-            // TODO Load from file
+            // Display new window for loading from file with the following fields:
+            // - File path
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open Resource File");
+            File selectedFile = fileChooser.showOpenDialog(primaryStage);
+            if (selectedFile == null) {
+                return;
+            }
+            // Get the file content
+            String filePath = selectedFile.getAbsolutePath();
+            // Open the file
+            String content = "";
+            try{
+                content = new String(Files.readAllBytes(Paths.get(filePath)));
+            } catch (IOException ex) {
+                System.out.println("Exception " + ex.getMessage());
+            }
+
+            // First line is width and height
+            String[] lines = content.split("\n");
+            String[] dimensions = lines[0].split(";");
+            int width = 0;
+            int height = 0;
+            try {
+                width = Integer.parseInt(dimensions[0]);
+                height = Integer.parseInt(dimensions[1]);
+            } catch (Exception ex){
+                System.out.println("Exception " + ex.getMessage());
+                return;
+            }
+            Room room = Room.create(width, height);
+            // Load the obstacles and robots into room
+            for (int i = 1; i < lines.length; i++) {
+                String[] parts = lines[i].split(";");
+                if (parts.length != 3) {
+                    continue;
+                }
+                int x = 0;
+                int y = 0;
+                try {
+                    x = Integer.parseInt(parts[1]);
+                    y = Integer.parseInt(parts[2]);
+                } catch (Exception ex) {
+                    System.out.println("Exception " + ex.getMessage());
+                    continue;
+                }
+                switch (parts[0]) {
+                    case "O" -> room.createObstacleAt(x, y);
+                    case "CR" -> {
+                        Position pos = new Position(x, y);
+                        Robot robot = ControlledRobot.create(room, pos);
+                    }
+                    case "AR" -> {
+                        Position pos = new Position(x, y);
+                        // TODO: Create Autonomous robot at POS
+                    }
+                }
+            }
+
+
+
+
+
+
+
         });
 
         button2.setOnAction(e -> {
