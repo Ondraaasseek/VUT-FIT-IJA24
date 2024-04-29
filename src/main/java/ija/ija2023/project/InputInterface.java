@@ -105,13 +105,7 @@ public class InputInterface extends Application {
                     }
                 }
             }
-
-
-
-
-
-
-
+            // TODO: Open simulation window with the loaded room with obstacles and robots
         });
 
         button2.setOnAction(e -> {
