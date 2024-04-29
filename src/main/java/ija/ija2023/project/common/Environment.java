@@ -16,7 +16,7 @@ public interface Environment extends ToolEnvironment {
     boolean createObstacleAt(int row, int col);
     boolean obstacleAt(int row, int col);
     boolean robotAt(Position p);
-    public ToolRobot getRobotFromPosition(Position p);
+    public Robot getRobotFromPosition(Position p);
     boolean containsPosition(Position pos);
     List<RobotView> robotViews();
 }

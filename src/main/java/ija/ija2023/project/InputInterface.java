@@ -121,7 +121,7 @@ public class InputInterface extends Application {
                 }
                 // Call EnvCreator with the width and height
                 NewEnvStage.close();
-                EnvCreator.start(width, height);
+                EnvCreator.start(width, height, NewEnvStage);
 
             });
 

@@ -17,7 +17,7 @@ public class Room extends Object implements Environment {
     int rows;
     int cols;
     char[][] room;
-    List<ToolRobot> robots = new java.util.ArrayList<ToolRobot>();
+    List<Robot> robots = new java.util.ArrayList<Robot>();
     List<RobotView> robotViews = new java.util.ArrayList<RobotView>();
 
     private Room(int rows, int cols) {
@@ -73,6 +73,42 @@ public class Room extends Object implements Environment {
         return true;
     }
 
+    public boolean removeRobotFrom(int row, int col) {
+        // get robot from the position
+        Robot robot = this.getRobotFromPosition(new Position(row, col));
+        // check if robot is null
+        if (robot == null) {
+            return false;
+        }
+        // check if robot has a position
+        if (robot.getPosition() == null) {
+            return false;
+        }
+        // get robot position
+        Position robotPosition = robot.getPosition();
+        // check if robot position is within the room
+        if (!this.containsPosition(robotPosition)) {
+            return false;
+        }
+        // check if robot is at the position
+        if (room[robotPosition.getRow()][robotPosition.getCol()] != 'R') {
+            return false;
+        }
+        // remove robot from the room
+        room[robotPosition.getRow()][robotPosition.getCol()] = 'F';
+        // remove robot from the list of robots
+        robots.remove(robot);
+        // remove observer from the robot
+        for (RobotView robotView : robotViews) {
+            if (robotView.position.equals(robot.getPosition())) {
+                robot.removeObserver(robotView);
+                robotViews.remove(robotView);
+                break;
+            }
+        }
+        return true;
+    }
+
     public boolean containsPosition(Position pos) {
         // check if position is null
         if (pos == null) {
@@ -93,6 +129,20 @@ public class Room extends Object implements Environment {
         }
         // add obstacle to the room
         room[row][col] = 'O';
+        return true;
+    }
+
+    public boolean removeObstacleFrom(int row, int col) {
+        // check if position is within the room
+        if (!this.containsPosition(new Position(row, col))) {
+            return false;
+        }
+        // check if obstacle is at the position
+        if (room[row][col] != 'O') {
+            return false;
+        }
+        // remove obstacle from the room
+        room[row][col] = 'F';
         return true;
     }
 
@@ -136,7 +186,7 @@ public class Room extends Object implements Environment {
         return false;
     }
 
-    public ToolRobot getRobotFromPosition(Position p) {
+    public Robot getRobotFromPosition(Position p) {
         // check if position is null
         if (p == null) {
             return null;
@@ -146,7 +196,7 @@ public class Room extends Object implements Environment {
             return null;
         }
         // check if robot is at the position
-        for(ToolRobot robot : robots) {
+        for(Robot robot : robots) {
             if (robot.getPosition().equals(p)) {
                 return robot;
             }
