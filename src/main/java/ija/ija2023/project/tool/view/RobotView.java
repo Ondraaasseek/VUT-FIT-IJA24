@@ -3,7 +3,6 @@ package ija.ija2023.project.tool.view;
 import ija.ija2023.project.tool.common.Observable;
 import ija.ija2023.project.tool.common.Position;
 import ija.ija2023.project.tool.common.ToolRobot;
-import ija.ija2023.project.tool.EnvPresenter;
 
 public class RobotView implements ComponentView, Observable.Observer {
 
@@ -16,7 +15,7 @@ public class RobotView implements ComponentView, Observable.Observer {
     }
     public void update(Observable o) {
         // Zpracovává notifikaci o změně v objektu Observable
-        Position oldPos = this.position;
+        //Position oldPos = this.position;
         this.position = ((ToolRobot) o).getPosition();
         this.angle = ((ToolRobot) o).angle();
         //EnvPresenter.repaint();

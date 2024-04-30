@@ -1,7 +1,7 @@
 package ija.ija2023.project.tool.view;
 
 
-import ija.ija2023.project.tool.view.RobotView;
+//import ija.ija2023.project.tool.view.RobotView;
 
 public class FieldView {
 

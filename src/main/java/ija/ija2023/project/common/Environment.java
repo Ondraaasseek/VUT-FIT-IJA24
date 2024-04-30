@@ -7,16 +7,15 @@ package ija.ija2023.project.common;
 
 import ija.ija2023.project.tool.common.Position;
 import ija.ija2023.project.tool.common.ToolEnvironment;
-import ija.ija2023.project.tool.common.ToolRobot;
 import ija.ija2023.project.tool.view.RobotView;
 
 import java.util.List;
 public interface Environment extends ToolEnvironment {
-    boolean addRobot(Robot robot);
+    boolean addRobot(AbstractRobot robot);
     boolean createObstacleAt(int row, int col);
     boolean obstacleAt(int row, int col);
     boolean robotAt(Position p);
-    public Robot getRobotFromPosition(Position p);
+    public AbstractRobot getRobotFromPosition(Position p);
     boolean containsPosition(Position pos);
     List<RobotView> robotViews();
 }

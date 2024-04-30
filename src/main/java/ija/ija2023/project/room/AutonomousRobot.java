@@ -9,8 +9,8 @@ import ija.ija2023.project.common.AbstractRobot;
 import ija.ija2023.project.common.Environment;
 import ija.ija2023.project.tool.common.Position;
 
-public class ControlledRobot extends AbstractRobot {
-    public ControlledRobot(Environment env, Position pos) {
+public class AutonomousRobot extends AbstractRobot {
+    public AutonomousRobot(Environment env, Position pos) {
         super(env, pos);
     }
 }

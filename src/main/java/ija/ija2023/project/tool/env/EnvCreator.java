@@ -1,12 +1,14 @@
-package ija.ija2023.project;
+package ija.ija2023.project.tool.env;
 
+import ija.ija2023.project.common.AbstractRobot;
+import ija.ija2023.project.common.RobotFactory;
+import ija.ija2023.project.room.AutonomousRobot;
 import ija.ija2023.project.room.ControlledRobot;
 import ija.ija2023.project.room.Room;
 import ija.ija2023.project.tool.common.Position;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -16,8 +18,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
@@ -26,10 +26,15 @@ public class EnvCreator {
     static String lastClickedButton[] = {"obstacle"};
     static boolean controlledRobotAdded = false;
 
-    public static void start(int width, int height, Stage beforeStage) {
+    public static void start(Room room, Stage beforeStage) {
 
         // Create the environment
-        Room room = Room.create(width, height);
+        if (room == null) {
+            throw new IllegalArgumentException("Room cannot be null");
+        }
+        int width = room.cols();
+        int height = room.rows();
+        lastClickedButton[0] = "obstacle";
         Stage primaryStage = new Stage();
         BorderPane root = new BorderPane();
 
@@ -116,13 +121,26 @@ public class EnvCreator {
 
                 // Check if there is a robot
                 if (room.robotAt(new Position(i, j))) {
-                    // Draw robot
-                    Circle robotModel = new Circle(scale/2);
-                    robotModel.setFill(javafx.scene.paint.Color.RED);
-                    robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
-                    // Add robot to the scene
-                    roomGridPane.add(robotModel, i, j);
-                    continue;
+                    AbstractRobot robot = room.getRobotFromPosition(new Position(i, j));
+                    if (robot instanceof ControlledRobot) {
+                        controlledRobotAdded = true;
+                        // Draw robot
+                        Circle robotModel = new Circle(scale/2);
+                        robotModel.setFill(javafx.scene.paint.Color.BLUE);
+                        robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
+                        // Add robot to the scene
+                        roomGridPane.add(robotModel, i, j);
+                        continue;
+                    }
+                    if (robot instanceof AutonomousRobot) {
+                        // Draw robot
+                        Circle robotModel = new Circle(scale/2);
+                        robotModel.setFill(javafx.scene.paint.Color.RED);
+                        robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
+                        // Add robot to the scene
+                        roomGridPane.add(robotModel, i, j);
+                        continue;
+                    }
                 }
             }
         }
@@ -170,7 +188,7 @@ public class EnvCreator {
 
             private void createAutomatedRobotAt(int row, int col){
                 // Create new robot
-                ControlledRobot.create(room, new Position(row, col));
+                RobotFactory.create(room, new Position(row, col));
                 // Draw robot
                 Circle robotModel = new Circle(scale/2);
                 robotModel.setFill(javafx.scene.paint.Color.RED);
@@ -183,7 +201,7 @@ public class EnvCreator {
                 if (controlledRobotAdded) return;
                 controlledRobotAdded = true;
                 // Create new robot
-                ControlledRobot.create(room, new Position(row, col));
+                RobotFactory.create(room, new Position(row, col), true);
                 // Draw robot
                 Circle robotModel = new Circle(scale/2);
                 robotModel.setFill(javafx.scene.paint.Color.BLUE);

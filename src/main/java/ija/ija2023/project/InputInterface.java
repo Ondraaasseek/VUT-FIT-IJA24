@@ -1,9 +1,10 @@
 package ija.ija2023.project;
 
 import ija.ija2023.project.common.Robot;
-import ija.ija2023.project.room.ControlledRobot;
+import ija.ija2023.project.common.RobotFactory;
 import ija.ija2023.project.room.Room;
 import ija.ija2023.project.tool.common.Position;
+import ija.ija2023.project.tool.env.EnvCreator;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
@@ -22,7 +23,6 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 import java.io.File;
@@ -67,12 +67,16 @@ public class InputInterface extends Application {
 
             // First line is width and height
             String[] lines = content.split("\n");
-            String[] dimensions = lines[0].split(";");
+            //test print all lines from file
+            for (String line : lines) {
+                System.out.println(line);
+            }
+            String[] dimensions = lines[0].trim().split(";");
             int width = 0;
             int height = 0;
             try {
-                width = Integer.parseInt(dimensions[0]);
-                height = Integer.parseInt(dimensions[1]);
+                height = Integer.parseInt(dimensions[0]);
+                width = Integer.parseInt(dimensions[1]);
             } catch (Exception ex){
                 System.out.println("Exception " + ex.getMessage());
                 return;
@@ -81,7 +85,7 @@ public class InputInterface extends Application {
             // Load the obstacles and robots into room
             boolean controlRobot = false;
             for (int i = 1; i < lines.length; i++) {
-                String[] parts = lines[i].split(";");
+                String[] parts = lines[i].trim().split(";");
                 if (parts.length != 3) {
                     return;
                 }
@@ -118,11 +122,17 @@ public class InputInterface extends Application {
                         }
                         controlRobot = true;
                         System.out.println("INFO Creating controlled robot at " + x + " " + y);
-                        Robot robot = ControlledRobot.create(room, pos);
+                        Robot robot = RobotFactory.create(room, pos, true);
+                        if (robot == null) {
+                            System.out.println("Exception Robot creation failed.");
+                        }
                     }
                     case "AR" -> {
                         System.out.println("INFO Creating autonomous robot at " + x + " " + y);
-                        // TODO: Create Autonomous robot at POS
+                        Robot robot = RobotFactory.create(room, pos);
+                        if (robot == null) {
+                            System.out.println("Exception Robot creation failed.");
+                        }
                     }
                 }
             }
@@ -130,7 +140,8 @@ public class InputInterface extends Application {
                 return;
             }
             System.out.println("INFO Room loaded successfully.");
-            // TODO: Open simulation window with the loaded room with obstacles and robots
+            primaryStage.close();
+            EnvCreator.start(room, primaryStage);
         });
 
         button2.setOnAction(e -> {
@@ -213,8 +224,8 @@ public class InputInterface extends Application {
                 }
                 // Call EnvCreator with the width and height
                 NewEnvStage.close();
-                EnvCreator.start(width, height, NewEnvStage);
-
+                Room room = Room.create(width, height);
+                EnvCreator.start(room, NewEnvStage);
             });
 
             widthField.focusedProperty().addListener(new ChangeListener<Boolean>() {

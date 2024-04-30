@@ -3,7 +3,7 @@
  * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
  */
 
-package ija.ija2023.project.tool;
+package ija.ija2023.project.tool.env;
 
 import ija.ija2023.project.tool.common.AbstractObservableRobot;
 import ija.ija2023.project.tool.common.ToolRobot;

@@ -7,8 +7,8 @@ package ija.ija2023.project.room;
 
 import java.util.List;
 
+import ija.ija2023.project.common.AbstractRobot;
 import ija.ija2023.project.common.Environment;
-import ija.ija2023.project.common.Robot;
 import ija.ija2023.project.tool.common.Position;
 import ija.ija2023.project.tool.common.ToolRobot;
 import ija.ija2023.project.tool.view.RobotView;
@@ -17,7 +17,7 @@ public class Room extends Object implements Environment {
     int rows;
     int cols;
     char[][] room;
-    List<Robot> robots = new java.util.ArrayList<Robot>();
+    List<AbstractRobot> robots = new java.util.ArrayList<AbstractRobot>();
     List<RobotView> robotViews = new java.util.ArrayList<RobotView>();
 
     private Room(int rows, int cols) {
@@ -42,7 +42,7 @@ public class Room extends Object implements Environment {
         return new Room(rows, cols);
     }
 
-    public boolean addRobot(Robot robot) {
+    public boolean addRobot(AbstractRobot robot) {
         // check if robot is null
         if (robot == null) {
             return false;
@@ -75,7 +75,7 @@ public class Room extends Object implements Environment {
 
     public boolean removeRobotFrom(int row, int col) {
         // get robot from the position
-        Robot robot = this.getRobotFromPosition(new Position(row, col));
+        AbstractRobot robot = this.getRobotFromPosition(new Position(row, col));
         // check if robot is null
         if (robot == null) {
             return false;
@@ -178,7 +178,7 @@ public class Room extends Object implements Environment {
             return false;
         }
         // check if robot is at the position
-        for(ToolRobot robot : robots) {
+        for(AbstractRobot robot : robots) {
             if (robot.getPosition().equals(p)) {
                 return true;
             }
@@ -186,7 +186,7 @@ public class Room extends Object implements Environment {
         return false;
     }
 
-    public Robot getRobotFromPosition(Position p) {
+    public AbstractRobot getRobotFromPosition(Position p) {
         // check if position is null
         if (p == null) {
             return null;
@@ -196,7 +196,7 @@ public class Room extends Object implements Environment {
             return null;
         }
         // check if robot is at the position
-        for(Robot robot : robots) {
+        for(AbstractRobot robot : robots) {
             if (robot.getPosition().equals(p)) {
                 return robot;
             }
