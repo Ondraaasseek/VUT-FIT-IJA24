@@ -12,6 +12,7 @@ import javafx.geometry.Pos;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -125,8 +126,7 @@ public class EnvCreator {
                     if (robot instanceof ControlledRobot) {
                         controlledRobotAdded = true;
                         // Draw robot
-                        Circle robotModel = new Circle(scale/2);
-                        robotModel.setFill(javafx.scene.paint.Color.BLUE);
+                        Group robotModel = drawRobotModel(scale, true);
                         robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                         // Add robot to the scene
                         roomGridPane.add(robotModel, i, j);
@@ -134,8 +134,7 @@ public class EnvCreator {
                     }
                     if (robot instanceof AutonomousRobot) {
                         // Draw robot
-                        Circle robotModel = new Circle(scale/2);
-                        robotModel.setFill(javafx.scene.paint.Color.RED);
+                        Group robotModel = drawRobotModel(scale);
                         robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                         // Add robot to the scene
                         roomGridPane.add(robotModel, i, j);
@@ -171,8 +170,7 @@ public class EnvCreator {
                     case "controlledRobot":
                         createControlledRobotAt(row, col);
                         break;
-                }
-                
+                }               
             }
 
             private void createObstacleAt(int row, int col){
@@ -190,8 +188,7 @@ public class EnvCreator {
                 // Create new robot
                 RobotFactory.create(room, new Position(row, col));
                 // Draw robot
-                Circle robotModel = new Circle(scale/2);
-                robotModel.setFill(javafx.scene.paint.Color.RED);
+                Group robotModel = drawRobotModel(scale);
                 robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                 // Add robot to the scene
                 roomGridPane.add(robotModel, col, row);
@@ -203,8 +200,7 @@ public class EnvCreator {
                 // Create new robot
                 RobotFactory.create(room, new Position(row, col), true);
                 // Draw robot
-                Circle robotModel = new Circle(scale/2);
-                robotModel.setFill(javafx.scene.paint.Color.BLUE);
+                Group robotModel = drawRobotModel(scale, true);
                 robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                 // Add robot to the scene
                 roomGridPane.add(robotModel, col, row);
@@ -228,26 +224,53 @@ public class EnvCreator {
         };
     }
 
-    private static EventHandler<MouseEvent> clickRobotHandler(Circle Robot, GridPane roomGridPane, Room room) {
+    private static EventHandler<MouseEvent> clickRobotHandler(Group Robot, GridPane roomGridPane, Room room) {
         return new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 if (event.getButton() == MouseButton.PRIMARY) {
-                    // rotate robot TODO
+                    // rotate robot
+                    Robot.setRotate(Robot.getRotate() - 45);
+                    // rotate robot in the room
+                    int row = GridPane.getRowIndex(Robot);
+                    int col = GridPane.getColumnIndex(Robot);
+                    // Get robot from the room
+                    AbstractRobot robot = room.getRobotFromPosition(new Position(row, col));
+                    robot.turn();
                 }
                 if (event.getButton() == MouseButton.SECONDARY) {
                     int row = GridPane.getRowIndex(Robot);
                     int col = GridPane.getColumnIndex(Robot);
+                    // Get robot from the room
+                    AbstractRobot robot = room.getRobotFromPosition(new Position(row, col));
+                    if (robot instanceof ControlledRobot) {
+                        controlledRobotAdded = false;
+                    }
                     // Remove robot from the room
                     room.removeRobotFrom(row, col);
                     // Remove obstacle from the scene
-                    roomGridPane.getChildren().remove(Robot);
-                    // Set controlledRobotAdded to false if controlled robot was removed
-                    if (Robot.getFill() == javafx.scene.paint.Color.BLUE) {
-                        controlledRobotAdded = false;
-                    }
+                    roomGridPane.getChildren().remove(Robot);                    
                 }
             }
         };
+    }
+
+    //draw complex robot model
+    private static Group drawRobotModel(int scale) {
+        return drawRobotModel(scale, false);
+    }
+    private static Group drawRobotModel(int scale, Boolean controlledRobot) {
+        Group robotModel = new Group();
+        // Draw robot head
+        Circle head = new Circle(scale/2);
+        if (controlledRobot) head.setFill(javafx.scene.paint.Color.BLUE);
+        else head.setFill(javafx.scene.paint.Color.RED);
+        // Draw robot eye
+        Circle eye = new Circle(scale/10);
+        eye.setFill(javafx.scene.paint.Color.BLACK);
+        eye.setTranslateY(-scale/3);
+        // Add all parts to the robot model
+        robotModel.getChildren().addAll(head, eye);
+        return robotModel;
     }
 }
