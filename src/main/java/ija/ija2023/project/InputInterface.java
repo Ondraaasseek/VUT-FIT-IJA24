@@ -92,18 +92,17 @@ public class InputInterface extends Application {
                     y = Integer.parseInt(parts[2]);
                     if (x < 0 || x >= width || y < 0 || y >= height) {
                         throw new Exception("Position out of range.");
-                        // TODO: Handle error
                     }
                 } catch (Exception ex) {
                     System.out.println("Exception " + ex.getMessage());
-                    // TODO: Handle error
-                    continue;
+                    room = null;
+                    return;
                 }
                 Position pos = new Position(x, y);
                 if (room.obstacleAt(pos) || room.robotAt(pos)) {
                     System.out.println("Exception Position is already occupied.");
-                    // TODO: Handle error
-                    continue;
+                    room = null;
+                    break;
                 }
                 switch (parts[0]) {
                     case "O" -> {
@@ -113,8 +112,8 @@ public class InputInterface extends Application {
                     case "CR" -> {
                         if (controlRobot) {
                             System.out.println("Exception Controlled robot already exists.");
-                            // TODO: Handle error
-                            continue;
+                            room = null;
+                            break;
                         }
                         controlRobot = true;
                         System.out.println("INFO Creating controlled robot at " + x + " " + y);
@@ -126,6 +125,10 @@ public class InputInterface extends Application {
                     }
                 }
             }
+            if (room == null) {
+                return;
+            }
+            System.out.println("INFO Room loaded successfully.");
             // TODO: Open simulation window with the loaded room with obstacles and robots
         });
 
