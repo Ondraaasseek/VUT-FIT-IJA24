@@ -83,7 +83,7 @@ public class InputInterface extends Application {
             for (int i = 1; i < lines.length; i++) {
                 String[] parts = lines[i].split(";");
                 if (parts.length != 3) {
-                    continue;
+                    return;
                 }
                 int x = 0;
                 int y = 0;
@@ -99,6 +99,7 @@ public class InputInterface extends Application {
                     return;
                 }
                 Position pos = new Position(x, y);
+                assert room != null;
                 if (room.obstacleAt(pos) || room.robotAt(pos)) {
                     System.out.println("Exception Position is already occupied.");
                     room = null;
