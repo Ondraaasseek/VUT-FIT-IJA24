@@ -79,6 +79,7 @@ public class InputInterface extends Application {
             }
             Room room = Room.create(width, height);
             // Load the obstacles and robots into room
+            boolean controlRobot = false;
             for (int i = 1; i < lines.length; i++) {
                 String[] parts = lines[i].split(";");
                 if (parts.length != 3) {
@@ -89,18 +90,38 @@ public class InputInterface extends Application {
                 try {
                     x = Integer.parseInt(parts[1]);
                     y = Integer.parseInt(parts[2]);
+                    if (x < 0 || x >= width || y < 0 || y >= height) {
+                        throw new Exception("Position out of range.");
+                        // TODO: Handle error
+                    }
                 } catch (Exception ex) {
                     System.out.println("Exception " + ex.getMessage());
+                    // TODO: Handle error
+                    continue;
+                }
+                Position pos = new Position(x, y);
+                if (room.obstacleAt(pos) || room.robotAt(pos)) {
+                    System.out.println("Exception Position is already occupied.");
+                    // TODO: Handle error
                     continue;
                 }
                 switch (parts[0]) {
-                    case "O" -> room.createObstacleAt(x, y);
+                    case "O" -> {
+                        System.out.println("INFO Creating obstacle at " + x + " " + y);
+                        room.createObstacleAt(x, y);
+                    }
                     case "CR" -> {
-                        Position pos = new Position(x, y);
+                        if (controlRobot) {
+                            System.out.println("Exception Controlled robot already exists.");
+                            // TODO: Handle error
+                            continue;
+                        }
+                        controlRobot = true;
+                        System.out.println("INFO Creating controlled robot at " + x + " " + y);
                         Robot robot = ControlledRobot.create(room, pos);
                     }
                     case "AR" -> {
-                        Position pos = new Position(x, y);
+                        System.out.println("INFO Creating autonomous robot at " + x + " " + y);
                         // TODO: Create Autonomous robot at POS
                     }
                 }
