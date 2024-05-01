@@ -43,6 +43,8 @@ public class EnvInput extends Application {
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(10);
         Scene scene = new Scene(vbox, 300, 200);
+
+        // Show the window
         primaryStage.setScene(scene);
         primaryStage.show();
     }
