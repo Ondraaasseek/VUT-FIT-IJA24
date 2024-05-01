@@ -163,7 +163,7 @@ public class EnvPresenter {
                                 double newY = robotModel.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2;
 
                                 // Check if new position is within floor boundaries
-                                boolean collisionDetected = !(newX - (double) scale / 2 >= roomOffsetX && newX + (double) scale / 2 <= roomOffsetX + scale * width && newY - (double) scale / 2 >= 0 && newY + (double) scale / 2 <= scale * height);
+                                boolean collisionDetected = !(newX - (double) scale / 2 - 6 >= roomOffsetX && newX + (double) scale / 2 - 6 <= roomOffsetX + scale * width && newY - (double) scale / 2 - 6 >= 0 && newY + (double) scale / 2 - 6 <= scale * height);
 
                                 // Check if new position is not colliding with obstacle
                                 for (int x = 0; x < width; x++) {
