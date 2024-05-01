@@ -246,7 +246,7 @@ public class EnvCreator {
             public void handle(MouseEvent event) {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     // rotate robot
-                    Robot.setRotate(Robot.getRotate() - 45);
+                    Robot.setRotate(Robot.getRotate() + 45);
                     // rotate robot in the room
                     int row = GridPane.getRowIndex(Robot);
                     int col = GridPane.getColumnIndex(Robot);

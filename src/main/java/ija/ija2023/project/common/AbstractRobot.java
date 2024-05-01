@@ -17,7 +17,7 @@ public abstract class AbstractRobot extends AbstractObservableRobot implements R
 
     public int angle() {
         // return current angle
-        return this.angle-90;
+        return this.angle;
     }
 
     public boolean canMove() {
