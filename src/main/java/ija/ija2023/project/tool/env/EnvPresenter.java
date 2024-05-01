@@ -157,9 +157,37 @@ public class EnvPresenter {
                         AnimationTimer forwardButtonTimer = new AnimationTimer() {
                             @Override
                             public void handle(long now) {
-                                double angle = robotModel.getRotate();    
-                                robotModel.setLayoutX(robotModel.getLayoutX() + Math.cos(Math.toRadians(angle)) * 2);
-                                robotModel.setLayoutY(robotModel.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2);       
+                                double angle = robotModel.getRotate();
+                                // Calculate new position
+                                double newX = robotModel.getLayoutX() + Math.cos(Math.toRadians(angle)) * 2;
+                                double newY = robotModel.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2;
+
+                                // Check if new position is within floor boundaries
+                                boolean collisionDetected = !(newX - (double) scale / 2 >= roomOffsetX && newX + (double) scale / 2 <= roomOffsetX + scale * width && newY - (double) scale / 2 >= 0 && newY + (double) scale / 2 <= scale * height);
+
+                                // Check if new position is not colliding with obstacle
+                                for (int x = 0; x < width; x++) {
+                                    for (int y = 0; y < height; y++) {
+                                        if (room.obstacleAt(y, x)) {
+                                            // Check if new position is colliding with obstacle
+                                            if (newX + (double) scale / 2 >= roomOffsetX + scale * x && newX - (double) scale / 2 <= roomOffsetX + scale * x + scale && newY + (double) scale / 2 >= scale * y && newY - (double) scale / 2 <= scale * y + scale) {
+                                                // System log
+                                                System.out.println("INFO Controlled robot collided with an obstacle");
+                                                collisionDetected = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (collisionDetected) {
+                                        break;
+                                    }
+                                }
+
+                                // If no collision detected, update position
+                                if (!collisionDetected) {
+                                    robotModel.setLayoutX(newX);
+                                    robotModel.setLayoutY(newY);
+                                }
                             }
                         };
                         forwardButton.setOnAction(e -> {
