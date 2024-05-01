@@ -163,7 +163,7 @@ public class EnvPresenter {
                                 double newY = robotModel.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2;
 
                                 // Check if new position is within floor boundaries
-                                boolean collisionDetected = !(newX - (double) scale / 2 - 6 >= roomOffsetX && newX + (double) scale / 2 - 6 <= roomOffsetX + scale * width && newY - (double) scale / 2 - 6 >= 0 && newY + (double) scale / 2 - 6 <= scale * height);
+                                boolean collisionDetected = !(newX - (double) scale / 2 + 6 >= roomOffsetX && newX + (double) scale / 2 - 6 <= roomOffsetX + scale * width && newY - (double) scale / 2 + 6 >= 0 && newY + (double) scale / 2 - 6 <= scale * height);
 
                                 // Check if new position is not colliding with obstacle
                                 for (int x = 0; x < width; x++) {
@@ -220,6 +220,63 @@ public class EnvPresenter {
                         robotModel.setLayoutY(scale*y+scale/2);
                         robotModel.setRotate(robot.angle());
                         roomGroup.getChildren().add(robotModel);
+
+                        // rotation motion
+                        AnimationTimer rotationAutonomousTimer = new AnimationTimer() {
+                            @Override
+                            public void handle(long now) {
+                                robotModel.setRotate(robotModel.getRotate() + 1);
+                            }
+                        };
+
+                        // forward motion
+                        AnimationTimer forwardAutonomousTimer = new AnimationTimer() {
+                            @Override
+                            public void handle(long now) {
+                                rotationAutonomousTimer.stop();
+                                double angle = robotModel.getRotate();
+                                // Calculate new position
+                                double newX = robotModel.getLayoutX() + Math.cos(Math.toRadians(angle)) * 2;
+                                double newY = robotModel.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2;
+
+                                // Check if new position is within floor boundaries
+                                boolean collisionDetected = !(newX - (double) scale / 2 + 6 >= roomOffsetX && newX + (double) scale / 2 - 6 <= roomOffsetX + scale * width && newY - (double) scale / 2 + 6 >= 0 && newY + (double) scale / 2 - 6 <= scale * height);
+
+                                // Check if new position is not colliding with obstacle
+                                for (int x = 0; x < width; x++) {
+                                    for (int y = 0; y < height; y++) {
+                                        if (room.obstacleAt(y, x)) {
+                                            // Calculate the center of the obstacle
+                                            double obstacleCenterX = roomOffsetX + scale * x + (double) scale / 2;
+                                            double obstacleCenterY = scale * y + (double) scale / 2;
+
+                                            // Calculate the distance from the center of the circle to the closest point in the square
+                                            double dx = Math.max(Math.max(obstacleCenterX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (obstacleCenterX + scale));
+                                            double dy = Math.max(Math.max(obstacleCenterY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (obstacleCenterY + scale));
+
+                                            // Check if the distance is less than the radius of the circle
+                                            double robotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
+                                            if (dx * dx + dy * dy < robotRadius * robotRadius) {
+                                                collisionDetected = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (collisionDetected) {
+                                        rotationAutonomousTimer.start();
+                                        break;
+                                    }
+                                }
+
+                                // If no collision detected, update position
+                                if (!collisionDetected) {
+                                    robotModel.setLayoutX(newX);
+                                    robotModel.setLayoutY(newY);
+                                    
+                                }
+                            }
+                        };
+                        forwardAutonomousTimer.start();
                         continue;
                     }
                 }
