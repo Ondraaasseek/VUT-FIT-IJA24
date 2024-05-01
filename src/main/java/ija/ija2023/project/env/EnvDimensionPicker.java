@@ -66,6 +66,7 @@ public class EnvDimensionPicker {
         newEnvVbox.setSpacing(10);
         Scene newEnvScene = new Scene(newEnvVbox, 300, 200);
         NewEnvStage.setScene(newEnvScene);
+        NewEnvStage.show();
 
         cancelButton.setOnAction(e2 -> {
             NewEnvStage.close();
