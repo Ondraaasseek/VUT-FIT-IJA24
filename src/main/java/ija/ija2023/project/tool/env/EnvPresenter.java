@@ -169,10 +169,17 @@ public class EnvPresenter {
                                 for (int x = 0; x < width; x++) {
                                     for (int y = 0; y < height; y++) {
                                         if (room.obstacleAt(y, x)) {
-                                            // Check if new position is colliding with obstacle
-                                            if (newX + (double) scale / 2 >= roomOffsetX + scale * x && newX - (double) scale / 2 <= roomOffsetX + scale * x + scale && newY + (double) scale / 2 >= scale * y && newY - (double) scale / 2 <= scale * y + scale) {
-                                                // System log
-                                                System.out.println("INFO Controlled robot collided with an obstacle");
+                                            // Calculate the center of the obstacle
+                                            double obstacleCenterX = roomOffsetX + scale * x + (double) scale / 2;
+                                            double obstacleCenterY = scale * y + (double) scale / 2;
+
+                                            // Calculate the distance from the center of the circle to the closest point in the square
+                                            double dx = Math.max(Math.max(obstacleCenterX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (obstacleCenterX + scale));
+                                            double dy = Math.max(Math.max(obstacleCenterY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (obstacleCenterY + scale));
+
+                                            // Check if the distance is less than the radius of the circle
+                                            double robotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
+                                            if (dx * dx + dy * dy < robotRadius * robotRadius) {
                                                 collisionDetected = true;
                                                 break;
                                             }
