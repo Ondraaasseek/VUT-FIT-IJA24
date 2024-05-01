@@ -6,7 +6,6 @@ import ija.ija2023.project.common.robot.RobotFactory;
 import ija.ija2023.project.room.Room;
 
 public class InputParser {
-    
     static int numberOfLineParams = 3;
     static boolean controlledRobotAdded = false;
     static Room room = null;
@@ -23,7 +22,7 @@ public class InputParser {
         // Create the room
         room = Room.create(height, width);
         if (room == null) {
-            return null;
+            throw new Exception("Room creation failed.");
         }
 
         // Parse the rest of the file

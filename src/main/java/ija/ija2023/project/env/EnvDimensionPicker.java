@@ -110,7 +110,16 @@ public class EnvDimensionPicker {
                 }
 
                 // Create empty room
-                Room room = Room.create(height, width);
+                Room room = null;
+                try {
+                    room = Room.create(height, width);
+                    if (room == null) {
+                        throw new Exception("Room creation failed.");
+                    }
+                } catch (Exception ex) {
+                    System.out.println("ERROR " + ex.getMessage());
+                    return;
+                }
 
                 // Move to the next window
                 primaryStage.close();
