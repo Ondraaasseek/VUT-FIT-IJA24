@@ -6,8 +6,6 @@
 
 package ija.ija2023.project.common;
 
-import ija.ija2023.project.tool.common.Position;
-
 public class Obstacle extends Object {
     Environment env;
     Position pos;

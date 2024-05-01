@@ -3,7 +3,7 @@
  * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
  */
 
-package ija.ija2023.project.tool.common;
+package ija.ija2023.project.common;
 
 public class Position extends Object {
     int row;

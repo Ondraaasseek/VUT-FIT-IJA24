@@ -5,9 +5,9 @@
 
 package ija.ija2023.project.room;
 
-import ija.ija2023.project.common.AbstractRobot;
 import ija.ija2023.project.common.Environment;
-import ija.ija2023.project.tool.common.Position;
+import ija.ija2023.project.common.Position;
+import ija.ija2023.project.common.robot.AbstractRobot;
 
 public class AutonomousRobot extends AbstractRobot {
     public AutonomousRobot(Environment env, Position pos) {

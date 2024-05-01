@@ -1,11 +1,11 @@
-package ija.ija2023.project.tool.env;
+package ija.ija2023.project.env;
 
-import ija.ija2023.project.common.AbstractRobot;
-import ija.ija2023.project.common.RobotFactory;
+import ija.ija2023.project.common.Position;
+import ija.ija2023.project.common.robot.AbstractRobot;
+import ija.ija2023.project.common.robot.RobotFactory;
 import ija.ija2023.project.room.AutonomousRobot;
 import ija.ija2023.project.room.ControlledRobot;
 import ija.ija2023.project.room.Room;
-import ija.ija2023.project.tool.common.Position;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;

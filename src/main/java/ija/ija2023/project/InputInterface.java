@@ -1,10 +1,10 @@
 package ija.ija2023.project;
 
-import ija.ija2023.project.common.Robot;
-import ija.ija2023.project.common.RobotFactory;
+import ija.ija2023.project.common.Position;
+import ija.ija2023.project.common.robot.Robot;
+import ija.ija2023.project.common.robot.RobotFactory;
+import ija.ija2023.project.env.EnvCreator;
 import ija.ija2023.project.room.Room;
-import ija.ija2023.project.tool.common.Position;
-import ija.ija2023.project.tool.env.EnvCreator;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;

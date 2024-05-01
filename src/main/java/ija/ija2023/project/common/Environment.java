@@ -5,17 +5,13 @@
 
 package ija.ija2023.project.common;
 
-import ija.ija2023.project.tool.common.Position;
-import ija.ija2023.project.tool.common.ToolEnvironment;
-import ija.ija2023.project.tool.view.RobotView;
+import ija.ija2023.project.common.robot.AbstractRobot;
 
-import java.util.List;
-public interface Environment extends ToolEnvironment {
+public interface Environment {
     boolean addRobot(AbstractRobot robot);
     boolean createObstacleAt(int row, int col);
     boolean obstacleAt(int row, int col);
     boolean robotAt(Position p);
     public AbstractRobot getRobotFromPosition(Position p);
     boolean containsPosition(Position pos);
-    List<RobotView> robotViews();
 }

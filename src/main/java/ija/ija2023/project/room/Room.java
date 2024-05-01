@@ -7,18 +7,15 @@ package ija.ija2023.project.room;
 
 import java.util.List;
 
-import ija.ija2023.project.common.AbstractRobot;
 import ija.ija2023.project.common.Environment;
-import ija.ija2023.project.tool.common.Position;
-import ija.ija2023.project.tool.common.ToolRobot;
-import ija.ija2023.project.tool.view.RobotView;
+import ija.ija2023.project.common.Position;
+import ija.ija2023.project.common.robot.AbstractRobot;
 
 public class Room extends Object implements Environment {
     int rows;
     int cols;
     public char[][] room;
     List<AbstractRobot> robots = new java.util.ArrayList<AbstractRobot>();
-    List<RobotView> robotViews = new java.util.ArrayList<RobotView>();
 
     private Room(int rows, int cols) {
         // initialize rows and cols
@@ -65,11 +62,6 @@ public class Room extends Object implements Environment {
         room[robotPosition.getRow()][robotPosition.getCol()] = 'R';
         // add robot to the list of robots
         robots.add(robot);
-        // add observer to the robot
-        RobotView robotView = new RobotView();
-        robotView.position = robot.getPosition();
-        robot.addObserver(robotView);
-        robotViews.add(robotView);
         return true;
     }
 
@@ -98,14 +90,6 @@ public class Room extends Object implements Environment {
         room[robotPosition.getRow()][robotPosition.getCol()] = 'F';
         // remove robot from the list of robots
         robots.remove(robot);
-        // remove observer from the robot
-        for (RobotView robotView : robotViews) {
-            if (robotView.position.equals(robot.getPosition())) {
-                robot.removeObserver(robotView);
-                robotViews.remove(robotView);
-                break;
-            }
-        }
         return true;
     }
 
@@ -214,13 +198,8 @@ public class Room extends Object implements Environment {
         return this.cols;
     }
 
-    public List<ToolRobot> robots() {
+    public List<AbstractRobot> robots() {
         // return new list of robots
-        return new java.util.ArrayList<ToolRobot>(robots);
-    }
-
-    public List<RobotView> robotViews() {
-        // return new list of robot views
-        return this.robotViews;
+        return new java.util.ArrayList<AbstractRobot>(robots);
     }
 }

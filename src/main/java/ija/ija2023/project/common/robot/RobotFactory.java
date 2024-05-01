@@ -1,14 +1,14 @@
-package ija.ija2023.project.common;
+package ija.ija2023.project.common.robot;
 
+import ija.ija2023.project.common.Environment;
+import ija.ija2023.project.common.Position;
 import ija.ija2023.project.room.AutonomousRobot;
 import ija.ija2023.project.room.ControlledRobot;
-import ija.ija2023.project.tool.common.Position;
 
 public class RobotFactory {
     public static AbstractRobot create(Environment env, Position pos) {
         return create(env, pos, false);
     }
-
     public static AbstractRobot create(Environment env, Position pos, boolean controlled) {
         // check if env or pos is null
         if (env == null || pos == null) {
@@ -31,7 +31,7 @@ public class RobotFactory {
         if (!env.addRobot(robot)) {
             return null;
         }
-        // return new controlled robot
+        // return new robot
         return robot;
     }
 }

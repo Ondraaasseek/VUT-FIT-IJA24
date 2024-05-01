@@ -3,13 +3,13 @@
  * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
  */
 
-package ija.ija2023.project.tool.env;
+package ija.ija2023.project.env;
 
-import ija.ija2023.project.common.AbstractRobot;
+import ija.ija2023.project.common.Position;
+import ija.ija2023.project.common.robot.AbstractRobot;
 import ija.ija2023.project.room.AutonomousRobot;
 import ija.ija2023.project.room.ControlledRobot;
 import ija.ija2023.project.room.Room;
-import ija.ija2023.project.tool.common.Position;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -34,7 +34,6 @@ public class EnvPresenter {
         int height = room.rows();
         Stage primaryStage = new Stage();
         BorderPane root = new BorderPane();
-        Group controlledRobotGroup = null;
 
         primaryStage.setTitle("Room Creator");
 
@@ -110,7 +109,7 @@ public class EnvPresenter {
                         robotModel.setLayoutX(roomOffsetX+scale*x+scale/2);
                         robotModel.setLayoutY(scale*y+scale/2);
                         // get angle from robot in room
-                        robotModel.setRotate(robot.angle());
+                        robotModel.setRotate(robot.getAngle());
                         roomGroup.getChildren().add(robotModel);
 
                         // rotate right button
@@ -238,7 +237,7 @@ public class EnvPresenter {
                         // Add robot to the scene on a specific position
                         robotModel.setLayoutX(roomOffsetX+scale*x+scale/2);
                         robotModel.setLayoutY(scale*y+scale/2);
-                        robotModel.setRotate(robot.angle());
+                        robotModel.setRotate(robot.getAngle());
                         roomGroup.getChildren().add(robotModel);
 
                         // rotation motion
