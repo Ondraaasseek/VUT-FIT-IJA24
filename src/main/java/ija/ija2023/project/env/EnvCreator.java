@@ -3,9 +3,9 @@ package ija.ija2023.project.env;
 import ija.ija2023.project.common.Position;
 import ija.ija2023.project.common.robot.AbstractRobot;
 import ija.ija2023.project.common.robot.RobotFactory;
-import ija.ija2023.project.room.AutonomousRobot;
 import ija.ija2023.project.room.ControlledRobot;
 import ija.ija2023.project.room.Room;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -28,82 +28,81 @@ import javafx.scene.control.Button;
 public class EnvCreator {
     static String lastClickedButton[] = {"obstacle"};
     static boolean controlledRobotAdded = false;
+    static int scale = 100;
+    static Room room;
 
-    public static void start(Room room, Stage beforeStage) {
-        if (room == null) {
-            throw new IllegalArgumentException("Room cannot be null");
-        }
+    public static void start(Room roomInput, Stage beforeStage) {
+        // Title of the window
+        Stage creatorStage = new Stage();
+        creatorStage.setTitle("Room Creator");
+
+        // Set the last clicked button
+        lastClickedButton[0] = "obstacle";
+        room = roomInput;
+
+        // Calculate window size
         int width = room.cols();
         int height = room.rows();
-        lastClickedButton[0] = "obstacle";
-        Stage primaryStage = new Stage();
-        BorderPane root = new BorderPane();
-
-        primaryStage.setTitle("Room Creator");
-
         int controlPanelWidth = 500;
-        int ControlPanelHeight = 150;
-
-
-        int scale = 100;
+        int controlPanelHeight = 150;
         int sceneWidth = Math.max(scale * width, controlPanelWidth);
-        int sceneHeight = scale * height + ControlPanelHeight;
+        int sceneHeight = scale * height + controlPanelHeight;
 
-        // Create buttons
-        GridPane createButtonsGridPane = new GridPane();
-        createButtonsGridPane.setPrefSize(sceneWidth, ControlPanelHeight);
-        createButtonsGridPane.setHgap(10);
+        // Layout of the control panel
+        GridPane controlPanelGridPane = new GridPane();
+        controlPanelGridPane.setAlignment(Pos.CENTER);
+        controlPanelGridPane.setPrefSize(sceneWidth, controlPanelHeight);
+        controlPanelGridPane.setHgap(10);
+
+        // Button for creating obstacles
         Button obstacleButton = new Button("Add obstacle");
         obstacleButton.setOnAction(e -> {
             lastClickedButton[0] = "obstacle";
         });
+
+        // Button for creating autonomous robots
         Button automatedRobotButton = new Button("Add automated robot");
         automatedRobotButton.setOnAction(e -> {
             lastClickedButton[0] = "automatedRobot";
         });
+
+        // Button for creating controlled robots
         Button controlledRobotButton = new Button("Add controlled robot");
         controlledRobotButton.setOnAction(e -> {
             lastClickedButton[0] = "controlledRobot";
         });
 
-        createButtonsGridPane.add(obstacleButton, 0, 0);
-        createButtonsGridPane.add(automatedRobotButton, 1, 0);
-        createButtonsGridPane.add(controlledRobotButton, 2, 0);
+        // Add buttons to the control panel
+        controlPanelGridPane.add(obstacleButton, 0, 0);
+        controlPanelGridPane.add(automatedRobotButton, 1, 0);
+        controlPanelGridPane.add(controlledRobotButton, 2, 0);
 
-        // align content to center of a pane
-        createButtonsGridPane.setAlignment(Pos.CENTER);
-
-        root.setCenter(createButtonsGridPane);
-
-        Button createButton = new Button("Create");
-        createButton.setOnAction(e -> {
-            primaryStage.close();
-            EnvPresenter.start(room, primaryStage);
-        });
+        // Button for going back
         Button cancelButton = new Button("Cancel");
-        cancelButton.setOnAction(e -> {
-            primaryStage.close();
-            beforeStage.show();
-        });
+        cancelButton.setOnAction(cancelButtonHandler(creatorStage, beforeStage));
+
+        // Button for creating the environment
+        Button createButton = new Button("Create");
+        createButton.setOnAction(createButtonHandler(creatorStage));
+        
+        // Layout of the navigation buttons
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox buttonBox = new HBox(cancelButton, spacer, createButton);
-        buttonBox.setPadding(new Insets(10, 10, 10, 10)); // Padding
+        buttonBox.setPadding(new Insets(10));
 
-        root.setBottom(buttonBox);
-
-
+        // Layout of the room
         GridPane roomGridPane = new GridPane();
         roomGridPane.setAlignment(Pos.CENTER);
-        root.setTop(roomGridPane);       
 
+        // Draw the room
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-
                 // Draw floor
                 Rectangle floor = new Rectangle(scale, scale);
                 floor.setFill(javafx.scene.paint.Color.GRAY);
-                floor.setOnMouseClicked(createObjectHandler(floor, roomGridPane, room, scale));
+                floor.setOnMouseClicked(createObjectHandler(floor, roomGridPane));
+
                 // Add floor to the scene
                 roomGridPane.add(floor, x, y);
 
@@ -112,7 +111,8 @@ public class EnvCreator {
                     // Draw obstacle
                     Rectangle obstacle = new Rectangle(scale, scale);
                     obstacle.setFill(javafx.scene.paint.Color.BLACK);
-                    obstacle.setOnMouseClicked(removeObstacleHandler(obstacle, roomGridPane, room));
+                    obstacle.setOnMouseClicked(removeObstacleHandler(obstacle, roomGridPane));
+
                     // Add obstacle to the scene
                     roomGridPane.add(obstacle, x, y);
                     continue;
@@ -120,57 +120,58 @@ public class EnvCreator {
 
                 // Check if there is a robot
                 if (room.robotAt(new Position(y, x))) {
+                    // Check if the robot is controlled robot
                     AbstractRobot robot = room.getRobotFromPosition(new Position(y, x));
                     if (robot instanceof ControlledRobot) {
                         controlledRobotAdded = true;
-                        // Draw robot
-                        Group robotModel = drawRobotModel(scale, true);
-                        robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
-                        // Add robot to the scene
-                        roomGridPane.add(robotModel, x, y);
-                        GridPane.setHalignment(robotModel, HPos.CENTER);
-                        GridPane.setValignment(robotModel, VPos.CENTER);
-                        continue;
                     }
-                    if (robot instanceof AutonomousRobot) {
-                        // Draw robot
-                        Group robotModel = drawRobotModel(scale);
-                        robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
-                        // Add robot to the scene
-                        roomGridPane.add(robotModel, x, y);
-                        GridPane.setHalignment(robotModel, HPos.CENTER);
-                        GridPane.setValignment(robotModel, VPos.CENTER);
-                        continue;
-                    }
+
+                    // Draw robot
+                    Group robotModel = drawRobotModel(scale, robot instanceof ControlledRobot);
+                    robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane));
+
+                    // Add robot to the scene
+                    roomGridPane.add(robotModel, x, y);
+                    GridPane.setHalignment(robotModel, HPos.CENTER);
+                    GridPane.setValignment(robotModel, VPos.CENTER);
+                    continue;
                 }
             }
         }
 
+        // Layout of the window
+        BorderPane root = new BorderPane();
+        root.setTop(roomGridPane);
+        root.setCenter(controlPanelGridPane);
+        root.setBottom(buttonBox);
         Scene scene = new Scene(root, sceneWidth, sceneHeight);
 
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
+        // Show the window
+        creatorStage.setScene(scene);
+        creatorStage.show();
     }
 
-    private static EventHandler<MouseEvent> createObjectHandler(Rectangle floor, GridPane roomGridPane, Room room, int scale) {
+    private static EventHandler<MouseEvent> createObjectHandler(Rectangle floor, GridPane roomGridPane) {
         return new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                // Check if the left mouse button was clicked
                 if (event.getButton() != MouseButton.PRIMARY) return;
+
                 // Get row and column of the clicked floor
                 int row = GridPane.getRowIndex(floor);
                 int col = GridPane.getColumnIndex(floor);
-                // Check which button was clicked
+
+                // Add desired object to the room
                 switch(lastClickedButton[0]) {
                     case "obstacle":
                         createObstacleAt(row, col);
                         break;
                     case "automatedRobot":
-                        createAutomatedRobotAt(row, col);
+                        createRobotAt(row, col, false);
                         break;
                     case "controlledRobot":
-                        createControlledRobotAt(row, col);
+                        createRobotAt(row, col, true);
                         break;
                 }               
             }
@@ -178,121 +179,163 @@ public class EnvCreator {
             private void createObstacleAt(int row, int col){
                 // Add obstacle to the room
                 room.createObstacleAt(row, col);
+
                 // Draw obstacle
                 Rectangle obstacle = new Rectangle(scale, scale);
                 obstacle.setFill(javafx.scene.paint.Color.BLACK);
-                obstacle.setOnMouseClicked(removeObstacleHandler(obstacle, roomGridPane, room));
+                obstacle.setOnMouseClicked(removeObstacleHandler(obstacle, roomGridPane));
+
                 // Add obstacle to the scene
                 roomGridPane.add(obstacle, col, row);
+
                 // System log
                 System.out.println("INFO Creating obstacle at " + col + " " + row);
             }
 
-            private void createAutomatedRobotAt(int row, int col){
-                // Create new robot
-                RobotFactory.create(room, new Position(row, col));
-                // Draw robot
-                Group robotModel = drawRobotModel(scale);
-                robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
-                // Add robot to the scene
-                roomGridPane.add(robotModel, col, row);
-                GridPane.setHalignment(robotModel, HPos.CENTER);
-                GridPane.setValignment(robotModel, VPos.CENTER);
-                // System log
-                System.out.println("INFO Creating autonomous robot at " + col + " " + row);
-            }
+            private void createRobotAt(int row, int col, Boolean controlled){
+                // robot type
+                String robotType = "Autonomous robot";
 
-            private void createControlledRobotAt(int row, int col){
-                if (controlledRobotAdded) return;
-                controlledRobotAdded = true;
+                // Check if controlled robot already exists
+                if (controlled) {
+                    
+                    if (controlledRobotAdded) return;
+                    controlledRobotAdded = true;
+                    robotType = "Controlled robot";
+                }
+                
                 // Create new robot
-                RobotFactory.create(room, new Position(row, col), true);
+                RobotFactory.create(room, new Position(row, col), controlled);
+
                 // Draw robot
-                Group robotModel = drawRobotModel(scale, true);
-                robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
+                Group robotModel = drawRobotModel(scale, controlled);
+                robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane));
+
                 // Add robot to the scene
                 roomGridPane.add(robotModel, col, row);
                 GridPane.setHalignment(robotModel, HPos.CENTER);
                 GridPane.setValignment(robotModel, VPos.CENTER);
+
                 // System log
-                System.out.println("INFO Creating controlled robot at " + col + " " + row);
+                System.out.println("INFO " + robotType + " created at " + col + " " + row);
             }
         };
     }
 
-    private static EventHandler<MouseEvent> removeObstacleHandler(Rectangle Obstacle, GridPane roomGridPane, Room room) {
+    private static EventHandler<MouseEvent> removeObstacleHandler(Rectangle Obstacle, GridPane roomGridPane) {
         return new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                // Check if the right mouse button was clicked
                 if (event.getButton() != MouseButton.SECONDARY) return;
+
+                // Get row and column of the clicked obstacle
                 int row = GridPane.getRowIndex(Obstacle);
                 int col = GridPane.getColumnIndex(Obstacle);
+
+                // Check if there is an obstacle in the room
                 if (!room.obstacleAt(row, col)){
                     System.out.println("Exception missing obstacle at " + col + " " + row);
                     return;
                 }
-                System.out.println("INFO Obstacle removed from " + col + " " + row);
+
                 // Remove obstacle from the room
                 room.removeObstacleFrom(row, col);
+
                 // Remove obstacle from the scene
                 roomGridPane.getChildren().remove(Obstacle);
+
+                // System log
+                System.out.println("INFO Obstacle removed from " + col + " " + row);
             }
         };
     }
 
-    private static EventHandler<MouseEvent> clickRobotHandler(Group Robot, GridPane roomGridPane, Room room) {
+    private static EventHandler<MouseEvent> clickRobotHandler(Group Robot, GridPane roomGridPane) {
         return new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                // Get row and column of the clicked robot
+                int row = GridPane.getRowIndex(Robot);
+                int col = GridPane.getColumnIndex(Robot);
+
+                // Get robot from the room
+                AbstractRobot robot = room.getRobotFromPosition(new Position(row, col));
+
                 if (event.getButton() == MouseButton.PRIMARY) {
-                    // rotate robot
-                    Robot.setRotate(Robot.getRotate() + 45);
-                    // rotate robot in the room
-                    int row = GridPane.getRowIndex(Robot);
-                    int col = GridPane.getColumnIndex(Robot);
-                    // Get robot from the room
-                    AbstractRobot robot = room.getRobotFromPosition(new Position(row, col));
+                    // Rotate robot in the room
                     robot.turn();
+
+                    // rotate robotModel in the scene
+                    Robot.setRotate(Robot.getRotate() + 45);
+
                     // System log
                     System.out.println("INFO Robot rotated 45 degrees counter clockwise at " + col + " " + row);
                 }
                 if (event.getButton() == MouseButton.SECONDARY) {
-                    int row = GridPane.getRowIndex(Robot);
-                    int col = GridPane.getColumnIndex(Robot);
-                    // Get robot from the room
-                    AbstractRobot robot = room.getRobotFromPosition(new Position(row, col));
+                    // robot type
+                    String robotType = "Autonomous robot";
+
+                    // Check if the robot is controlled robot
                     if (robot instanceof ControlledRobot) {
                         controlledRobotAdded = false;
-                        System.out.println("INFO Controlled robot removed from " + col + " " + row);
+                        robotType = "Controlled robot";
                     }
-                    if (robot instanceof AutonomousRobot) {
-                        System.out.println("INFO Autonomous robot removed from " + col + " " + row);
-                    }
+                    
                     // Remove robot from the room
                     room.removeRobotFrom(row, col);
+
                     // Remove obstacle from the scene
-                    roomGridPane.getChildren().remove(Robot);                    
+                    roomGridPane.getChildren().remove(Robot);
+                    
+                    // System log
+                    System.out.println("INFO " + robotType + " removed from " + col + " " + row);
                 }
             }
         };
     }
 
-    //draw complex robot model
     public static Group drawRobotModel(int scale) {
         return drawRobotModel(scale, false);
     }
     public static Group drawRobotModel(int scale, Boolean controlledRobot) {
+        // Create robot model
         Group robotModel = new Group();
+
         // Draw robot head
         Circle head = new Circle(scale/2-6);
         if (controlledRobot) head.setFill(javafx.scene.paint.Color.BLUE);
         else head.setFill(javafx.scene.paint.Color.RED);
+
         // Draw robot eye
         Circle eye = new Circle(scale/10);
         eye.setFill(javafx.scene.paint.Color.BLACK);
         eye.setTranslateX(scale/3-2);
+
         // Add all parts to the robot model
         robotModel.getChildren().addAll(head, eye);
         return robotModel;
+    }
+
+    private static EventHandler<ActionEvent> cancelButtonHandler(Stage primaryStage, Stage beforeStage) {
+        return new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Move to the previous window
+                primaryStage.close();
+                beforeStage.show();
+            }
+        };
+    }
+
+    private static EventHandler<ActionEvent> createButtonHandler(Stage primaryStage) {
+        return new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Move to the next window
+                primaryStage.close();
+                EnvPresenter.start(room, primaryStage);
+            }
+        };
     }
 }

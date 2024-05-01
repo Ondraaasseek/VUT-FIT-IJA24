@@ -32,25 +32,27 @@ public class EnvDimensionPicker {
         Text textEnv = new Text("Create new environment");
         textEnv.setFont(Font.font("null", FontWeight.BOLD, 20));
 
-        // Layout of the window
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(10));
+        // Layout of the form
+        GridPane formGridPane = new GridPane();
+        formGridPane.setHgap(10);
+        formGridPane.setVgap(10);
+        formGridPane.setPadding(new Insets(10));
 
         // Width field
         Label widthLabel = new Label("Width:");
         TextField widthField = new TextField();
         widthField.focusedProperty().addListener(fieldFocusListener(widthField));
-        gridPane.add(widthLabel, 0, 0);
-        gridPane.add(widthField, 1, 0);
 
         // Height field
         Label heightLabel = new Label("Height:");
         TextField heightField = new TextField();
         heightField.focusedProperty().addListener(fieldFocusListener(heightField));
-        gridPane.add(heightLabel, 0, 1);
-        gridPane.add(heightField, 1, 1);
+
+        // Add the fields to the form
+        formGridPane.add(widthLabel, 0, 0);
+        formGridPane.add(widthField, 1, 0);
+        formGridPane.add(heightLabel, 0, 1);
+        formGridPane.add(heightField, 1, 1);
 
         // Button for going back
         Button cancelButton = new Button("Cancel");
@@ -60,12 +62,14 @@ public class EnvDimensionPicker {
         Button createButton = new Button("Create");
         createButton.setOnAction(createButtonHandler(dimensionStage, widthField, heightField));
         
-        // Layout of the window
+        // Layout of the navigation buttons
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox buttonBox = new HBox(cancelButton, spacer, createButton);
         buttonBox.setPadding(new Insets(10));
-        VBox vbox = new VBox(textEnv, gridPane, buttonBox);
+
+        // Layout of the window
+        VBox vbox = new VBox(textEnv, formGridPane, buttonBox);
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(10);
         Scene scene = new Scene(vbox, 300, 200);
