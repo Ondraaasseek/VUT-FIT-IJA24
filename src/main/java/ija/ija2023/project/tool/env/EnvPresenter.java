@@ -190,6 +190,26 @@ public class EnvPresenter {
                                     }
                                 }
 
+                                // Check if the robot is colliding with another robot
+                                // Get all robots in the by the group
+                                for (int i = 0; i < roomGroup.getChildren().size(); i++) {
+                                    if (roomGroup.getChildren().get(i) instanceof Group) {
+                                        Group robotGroup = (Group) roomGroup.getChildren().get(i);
+                                        // Exclude the current robot from the collision detection
+                                        if (!robotGroup.equals(robotModel)) {
+                                            double otherRobotX = robotGroup.getLayoutX();
+                                            double otherRobotY = robotGroup.getLayoutY();
+                                            double otherRobotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
+                                            double dxOther = Math.max(Math.max(otherRobotX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (otherRobotX + scale));
+                                            double dyOther = Math.max(Math.max(otherRobotY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (otherRobotY + scale));
+                                            if (dxOther * dxOther + dyOther * dyOther < otherRobotRadius * otherRobotRadius) {
+                                                collisionDetected = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
                                 // If no collision detected, update position
                                 if (!collisionDetected) {
                                     robotModel.setLayoutX(newX);
@@ -258,6 +278,31 @@ public class EnvPresenter {
                                             double robotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
                                             if (dx * dx + dy * dy < robotRadius * robotRadius) {
                                                 collisionDetected = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (collisionDetected) {
+                                        rotationAutonomousTimer.start();
+                                        break;
+                                    }
+                                }
+
+                                // Check if the robot is colliding with another robot
+                                // Get all robots in the by the group
+                                for (int i = 0; i < roomGroup.getChildren().size(); i++) {
+                                    if (roomGroup.getChildren().get(i) instanceof Group) {
+                                        Group robotGroup = (Group) roomGroup.getChildren().get(i);
+                                        // Exclude the current robot from the collision detection
+                                        if (!robotGroup.equals(robotModel)) {
+                                            double otherRobotX = robotGroup.getLayoutX();
+                                            double otherRobotY = robotGroup.getLayoutY();
+                                            double otherRobotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
+                                            double dxOther = Math.max(Math.max(otherRobotX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (otherRobotX + scale));
+                                            double dyOther = Math.max(Math.max(otherRobotY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (otherRobotY + scale));
+                                            if (dxOther * dxOther + dyOther * dyOther < otherRobotRadius * otherRobotRadius) {
+                                                collisionDetected = true;
+                                                rotationAutonomousTimer.start();
                                                 break;
                                             }
                                         }
