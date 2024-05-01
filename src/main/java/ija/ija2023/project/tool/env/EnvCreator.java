@@ -28,8 +28,6 @@ public class EnvCreator {
     static boolean controlledRobotAdded = false;
 
     public static void start(Room room, Stage beforeStage) {
-
-        // Create the environment
         if (room == null) {
             throw new IllegalArgumentException("Room cannot be null");
         }
@@ -78,7 +76,7 @@ public class EnvCreator {
         Button createButton = new Button("Create");
         createButton.setOnAction(e -> {
             primaryStage.close();
-            //TODO star env presenter
+            EnvPresenter.start(room, primaryStage);
         });
         Button cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> {
@@ -270,10 +268,10 @@ public class EnvCreator {
     }
 
     //draw complex robot model
-    private static Group drawRobotModel(int scale) {
+    public static Group drawRobotModel(int scale) {
         return drawRobotModel(scale, false);
     }
-    private static Group drawRobotModel(int scale, Boolean controlledRobot) {
+    public static Group drawRobotModel(int scale, Boolean controlledRobot) {
         Group robotModel = new Group();
         // Draw robot head
         Circle head = new Circle(scale/2);
