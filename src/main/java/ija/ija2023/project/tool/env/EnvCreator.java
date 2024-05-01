@@ -7,8 +7,10 @@ import ija.ija2023.project.room.ControlledRobot;
 import ija.ija2023.project.room.Room;
 import ija.ija2023.project.tool.common.Position;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -126,6 +128,8 @@ public class EnvCreator {
                         robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                         // Add robot to the scene
                         roomGridPane.add(robotModel, x, y);
+                        GridPane.setHalignment(robotModel, HPos.CENTER);
+                        GridPane.setValignment(robotModel, VPos.CENTER);
                         continue;
                     }
                     if (robot instanceof AutonomousRobot) {
@@ -134,6 +138,8 @@ public class EnvCreator {
                         robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                         // Add robot to the scene
                         roomGridPane.add(robotModel, x, y);
+                        GridPane.setHalignment(robotModel, HPos.CENTER);
+                        GridPane.setValignment(robotModel, VPos.CENTER);
                         continue;
                     }
                 }
@@ -190,6 +196,8 @@ public class EnvCreator {
                 robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                 // Add robot to the scene
                 roomGridPane.add(robotModel, col, row);
+                GridPane.setHalignment(robotModel, HPos.CENTER);
+                GridPane.setValignment(robotModel, VPos.CENTER);
                 // System log
                 System.out.println("INFO Creating autonomous robot at " + col + " " + row);
             }
@@ -204,6 +212,8 @@ public class EnvCreator {
                 robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                 // Add robot to the scene
                 roomGridPane.add(robotModel, col, row);
+                GridPane.setHalignment(robotModel, HPos.CENTER);
+                GridPane.setValignment(robotModel, VPos.CENTER);
                 // System log
                 System.out.println("INFO Creating controlled robot at " + col + " " + row);
             }
@@ -274,13 +284,13 @@ public class EnvCreator {
     public static Group drawRobotModel(int scale, Boolean controlledRobot) {
         Group robotModel = new Group();
         // Draw robot head
-        Circle head = new Circle(scale/2);
+        Circle head = new Circle(scale/2-6);
         if (controlledRobot) head.setFill(javafx.scene.paint.Color.BLUE);
         else head.setFill(javafx.scene.paint.Color.RED);
         // Draw robot eye
         Circle eye = new Circle(scale/10);
         eye.setFill(javafx.scene.paint.Color.BLACK);
-        eye.setTranslateX(scale/3);
+        eye.setTranslateX(scale/3-2);
         // Add all parts to the robot model
         robotModel.getChildren().addAll(head, eye);
         return robotModel;
