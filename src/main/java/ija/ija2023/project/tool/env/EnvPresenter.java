@@ -6,18 +6,17 @@
 package ija.ija2023.project.tool.env;
 
 import ija.ija2023.project.common.AbstractRobot;
-import ija.ija2023.project.common.RobotFactory;
 import ija.ija2023.project.room.AutonomousRobot;
 import ija.ija2023.project.room.ControlledRobot;
 import ija.ija2023.project.room.Room;
 import ija.ija2023.project.tool.common.Position;
+import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
@@ -81,26 +80,23 @@ public class EnvPresenter {
 
         root.setBottom(buttonBox);
 
-        GridPane roomGridPane = new GridPane();
-        roomGridPane.setAlignment(Pos.CENTER);
-        root.setTop(roomGridPane);
+        Group roomGroup = new Group();
+        root.setTop(roomGroup);
+        int roomOffsetX = (sceneWidth - scale * width) / 2;
+        // Draw floor
+        Rectangle floor = new Rectangle(roomOffsetX, 0, scale * width, scale * height);
+        floor.setFill(javafx.scene.paint.Color.GRAY);
+        roomGroup.getChildren().add(floor);
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-
-                // Draw floor
-                Rectangle floor = new Rectangle(scale, scale);
-                floor.setFill(javafx.scene.paint.Color.GRAY);
-                // Add floor to the scene
-                roomGridPane.add(floor, x, y);
-
                 // Check if there is an obstacle
                 if (room.obstacleAt(y, x)) {
                     // Draw obstacle
-                    Rectangle obstacle = new Rectangle(scale, scale);
+                    Rectangle obstacle = new Rectangle(roomOffsetX+scale*x, scale*y, scale, scale);
                     obstacle.setFill(javafx.scene.paint.Color.BLACK);
                     // Add obstacle to the scene
-                    roomGridPane.add(obstacle, x, y);
+                    roomGroup.getChildren().add(obstacle);
                     continue;
                 }
 
@@ -110,20 +106,73 @@ public class EnvPresenter {
                     if (robot instanceof ControlledRobot) {
                         // Draw robot
                         Group robotModel = EnvCreator.drawRobotModel(scale, true);
-                        // Add robot to the scene
-                        roomGridPane.add(robotModel, x, y);
-                        final Group finalControlledRobotGroup = robotModel;
-                        rightButton.setOnAction(e -> {
-                            finalControlledRobotGroup.setRotate(finalControlledRobotGroup.getRotate() + 5);
+                        // Add robot to the scene on a specific position
+                        robotModel.setLayoutX(roomOffsetX+scale*x+scale/2);
+                        robotModel.setLayoutY(scale*y+scale/2);
+                        // get angle from robot in room
+                        robotModel.setRotate(robot.angle());
+                        roomGroup.getChildren().add(robotModel);
+
+                        // rotate right button
+                        AnimationTimer rightButtonHoldTimer = new AnimationTimer() {
+                            @Override
+                            public void handle(long now) {
+                                robotModel.setRotate(robotModel.getRotate() + 2);
+                            }
+                        };
+                        rightButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                rightButtonHoldTimer.start();
+                            }
                         });
-                        leftButton.setOnAction(e -> {
-                            finalControlledRobotGroup.setRotate(finalControlledRobotGroup.getRotate() - 5);
+                        rightButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                rightButtonHoldTimer.stop();
+                            }
                         });
+
+                        // rotate left button
+                        AnimationTimer leftButtonHoldTimer = new AnimationTimer() {
+                            @Override
+                            public void handle(long now) {
+                                robotModel.setRotate(robotModel.getRotate() - 2);
+                            }
+                        };
+                        leftButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                leftButtonHoldTimer.start();
+                            }
+                        });
+                        leftButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                leftButtonHoldTimer.stop();
+                            }
+                        });
+                        
+                        // forward button
+                        AnimationTimer forwardButtonTimer = new AnimationTimer() {
+                            @Override
+                            public void handle(long now) {
+                                double angle = robotModel.getRotate();    
+                                robotModel.setLayoutX(robotModel.getLayoutX() + Math.cos(Math.toRadians(angle)) * 2);
+                                robotModel.setLayoutY(robotModel.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2);       
+                            }
+                        };
                         forwardButton.setOnAction(e -> {
                             if (Objects.equals(forwardButton.getText(), "FORWARD")) {
                                 forwardButton.setText("PAUSE");
+                                forwardButtonTimer.start();
+                                // System log
+                                System.out.println("INFO Controlled robot started moving forward");
                             } else {
                                 forwardButton.setText("FORWARD");
+                                forwardButtonTimer.stop();
+                                // System log
+                                System.out.println("INFO Controlled robot paused");
                             }
                         });
                         continue;
@@ -131,8 +180,11 @@ public class EnvPresenter {
                     if (robot instanceof AutonomousRobot) {
                         // Draw robot
                         Group robotModel = EnvCreator.drawRobotModel(scale);
-                        // Add robot to the scene
-                        roomGridPane.add(robotModel, x, y);
+                        // Add robot to the scene on a specific position
+                        robotModel.setLayoutX(roomOffsetX+scale*x+scale/2);
+                        robotModel.setLayoutY(scale*y+scale/2);
+                        robotModel.setRotate(robot.angle());
+                        roomGroup.getChildren().add(robotModel);
                         continue;
                     }
                 }

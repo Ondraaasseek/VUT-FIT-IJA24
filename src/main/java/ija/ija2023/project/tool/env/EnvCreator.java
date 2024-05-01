@@ -280,7 +280,7 @@ public class EnvCreator {
         // Draw robot eye
         Circle eye = new Circle(scale/10);
         eye.setFill(javafx.scene.paint.Color.BLACK);
-        eye.setTranslateY(-scale/3);
+        eye.setTranslateX(scale/3);
         // Add all parts to the robot model
         robotModel.getChildren().addAll(head, eye);
         return robotModel;
