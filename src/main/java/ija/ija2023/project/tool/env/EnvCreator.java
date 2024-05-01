@@ -49,12 +49,6 @@ public class EnvCreator {
         int sceneWidth = Math.max(scale * width, controlPanelWidth);
         int sceneHeight = scale * height + ControlPanelHeight;
 
-        int controlPanelOffset = (sceneWidth - controlPanelWidth) / 2;
-
-        // Create control panel
-        Rectangle controlPanel = new Rectangle(controlPanelOffset, height * scale, controlPanelWidth, ControlPanelHeight);
-        controlPanel.setFill(javafx.scene.paint.Color.LIGHTGRAY);
-
         // Create buttons
         GridPane createButtonsGridPane = new GridPane();
         createButtonsGridPane.setPrefSize(sceneWidth, ControlPanelHeight);
@@ -82,8 +76,12 @@ public class EnvCreator {
         root.setCenter(createButtonsGridPane);
 
         Button createButton = new Button("Create");
+        createButton.setOnAction(e -> {
+            primaryStage.close();
+            //TODO star env presenter
+        });
         Button cancelButton = new Button("Cancel");
-        cancelButton.setOnAction(e2 -> {
+        cancelButton.setOnAction(e -> {
             primaryStage.close();
             beforeStage.show();
         });
@@ -99,37 +97,37 @@ public class EnvCreator {
         roomGridPane.setAlignment(Pos.CENTER);
         root.setTop(roomGridPane);       
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
 
                 // Draw floor
                 Rectangle floor = new Rectangle(scale, scale);
                 floor.setFill(javafx.scene.paint.Color.GRAY);
                 floor.setOnMouseClicked(createObjectHandler(floor, roomGridPane, room, scale));
                 // Add floor to the scene
-                roomGridPane.add(floor, i, j);
+                roomGridPane.add(floor, x, y);
 
                 // Check if there is an obstacle
-                if (room.obstacleAt(i, j)) {
+                if (room.obstacleAt(y, x)) {
                     // Draw obstacle
                     Rectangle obstacle = new Rectangle(scale, scale);
                     obstacle.setFill(javafx.scene.paint.Color.BLACK);
                     obstacle.setOnMouseClicked(removeObstacleHandler(obstacle, roomGridPane, room));
                     // Add obstacle to the scene
-                    roomGridPane.add(obstacle, i, j);
+                    roomGridPane.add(obstacle, x, y);
                     continue;
                 }
 
                 // Check if there is a robot
-                if (room.robotAt(new Position(i, j))) {
-                    AbstractRobot robot = room.getRobotFromPosition(new Position(i, j));
+                if (room.robotAt(new Position(y, x))) {
+                    AbstractRobot robot = room.getRobotFromPosition(new Position(y, x));
                     if (robot instanceof ControlledRobot) {
                         controlledRobotAdded = true;
                         // Draw robot
                         Group robotModel = drawRobotModel(scale, true);
                         robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                         // Add robot to the scene
-                        roomGridPane.add(robotModel, i, j);
+                        roomGridPane.add(robotModel, x, y);
                         continue;
                     }
                     if (robot instanceof AutonomousRobot) {
@@ -137,7 +135,7 @@ public class EnvCreator {
                         Group robotModel = drawRobotModel(scale);
                         robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                         // Add robot to the scene
-                        roomGridPane.add(robotModel, i, j);
+                        roomGridPane.add(robotModel, x, y);
                         continue;
                     }
                 }
@@ -182,6 +180,8 @@ public class EnvCreator {
                 obstacle.setOnMouseClicked(removeObstacleHandler(obstacle, roomGridPane, room));
                 // Add obstacle to the scene
                 roomGridPane.add(obstacle, col, row);
+                // System log
+                System.out.println("INFO Creating obstacle at " + col + " " + row);
             }
 
             private void createAutomatedRobotAt(int row, int col){
@@ -192,6 +192,8 @@ public class EnvCreator {
                 robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                 // Add robot to the scene
                 roomGridPane.add(robotModel, col, row);
+                // System log
+                System.out.println("INFO Creating autonomous robot at " + col + " " + row);
             }
 
             private void createControlledRobotAt(int row, int col){
@@ -204,6 +206,8 @@ public class EnvCreator {
                 robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane, room));
                 // Add robot to the scene
                 roomGridPane.add(robotModel, col, row);
+                // System log
+                System.out.println("INFO Creating controlled robot at " + col + " " + row);
             }
         };
     }
@@ -213,9 +217,13 @@ public class EnvCreator {
             @Override
             public void handle(MouseEvent event) {
                 if (event.getButton() != MouseButton.SECONDARY) return;
-                // enable click event on floor
                 int row = GridPane.getRowIndex(Obstacle);
                 int col = GridPane.getColumnIndex(Obstacle);
+                if (!room.obstacleAt(row, col)){
+                    System.out.println("Exception missing obstacle at " + col + " " + row);
+                    return;
+                }
+                System.out.println("INFO Obstacle removed from " + col + " " + row);
                 // Remove obstacle from the room
                 room.removeObstacleFrom(row, col);
                 // Remove obstacle from the scene
@@ -237,6 +245,8 @@ public class EnvCreator {
                     // Get robot from the room
                     AbstractRobot robot = room.getRobotFromPosition(new Position(row, col));
                     robot.turn();
+                    // System log
+                    System.out.println("INFO Robot rotated 45 degrees counter clockwise at " + col + " " + row);
                 }
                 if (event.getButton() == MouseButton.SECONDARY) {
                     int row = GridPane.getRowIndex(Robot);
@@ -245,6 +255,10 @@ public class EnvCreator {
                     AbstractRobot robot = room.getRobotFromPosition(new Position(row, col));
                     if (robot instanceof ControlledRobot) {
                         controlledRobotAdded = false;
+                        System.out.println("INFO Controlled robot removed from " + col + " " + row);
+                    }
+                    if (robot instanceof AutonomousRobot) {
+                        System.out.println("INFO Autonomous robot removed from " + col + " " + row);
                     }
                     // Remove robot from the room
                     room.removeRobotFrom(row, col);

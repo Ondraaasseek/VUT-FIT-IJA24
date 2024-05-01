@@ -75,13 +75,13 @@ public class InputInterface extends Application {
             int width = 0;
             int height = 0;
             try {
-                height = Integer.parseInt(dimensions[0]);
-                width = Integer.parseInt(dimensions[1]);
+                width = Integer.parseInt(dimensions[0]);
+                height = Integer.parseInt(dimensions[1]);
             } catch (Exception ex){
                 System.out.println("Exception " + ex.getMessage());
                 return;
             }
-            Room room = Room.create(width, height);
+            Room room = Room.create(height, width);
             // Load the obstacles and robots into room
             boolean controlRobot = false;
             for (int i = 1; i < lines.length; i++) {
@@ -102,7 +102,7 @@ public class InputInterface extends Application {
                     room = null;
                     return;
                 }
-                Position pos = new Position(x, y);
+                Position pos = new Position(y, x);
                 assert room != null;
                 if (room.obstacleAt(pos) || room.robotAt(pos)) {
                     System.out.println("Exception Position is already occupied.");
@@ -112,7 +112,7 @@ public class InputInterface extends Application {
                 switch (parts[0]) {
                     case "O" -> {
                         System.out.println("INFO Creating obstacle at " + x + " " + y);
-                        room.createObstacleAt(x, y);
+                        room.createObstacleAt(y, x);
                     }
                     case "CR" -> {
                         if (controlRobot) {
@@ -140,6 +140,12 @@ public class InputInterface extends Application {
                 return;
             }
             System.out.println("INFO Room loaded successfully.");
+            for (int i = 0; i < room.rows(); i++) {
+                for (int j = 0; j < room.cols(); j++) {
+                    System.out.print(room.room[i][j] + " ");
+                }
+                System.out.println();
+            }
             primaryStage.close();
             EnvCreator.start(room, primaryStage);
         });
@@ -224,7 +230,14 @@ public class InputInterface extends Application {
                 }
                 // Call EnvCreator with the width and height
                 NewEnvStage.close();
-                Room room = Room.create(width, height);
+                Room room = Room.create(height, width);
+                System.out.println("INFO Empty room created successfully.");
+                for (int i = 0; i < room.rows(); i++) {
+                    for (int j = 0; j < room.cols(); j++) {
+                        System.out.print(room.room[i][j] + " ");
+                    }
+                    System.out.println();
+                }
                 EnvCreator.start(room, NewEnvStage);
             });
 

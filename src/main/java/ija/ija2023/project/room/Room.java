@@ -16,7 +16,7 @@ import ija.ija2023.project.tool.view.RobotView;
 public class Room extends Object implements Environment {
     int rows;
     int cols;
-    char[][] room;
+    public char[][] room;
     List<AbstractRobot> robots = new java.util.ArrayList<AbstractRobot>();
     List<RobotView> robotViews = new java.util.ArrayList<RobotView>();
 
