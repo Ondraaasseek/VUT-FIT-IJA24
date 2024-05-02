@@ -6,7 +6,7 @@ import java.util.List;
 
 public class History {
     private List<Pair> history = new ArrayList<Pair>();
-    private int virtualSize = 0;
+    private int index = -1;
 
     private class Pair {
         // date and time of a memento
@@ -27,15 +27,18 @@ public class History {
     }
 
     public void push(Date d, Memento m) {
-        if (virtualSize != history.size() && virtualSize > 0) {
-            history = history.subList(0, virtualSize - 1);
+        if (index < history.size() - 1) {
+            history = history.subList(0, index + 1);
         }
         history.add(new Pair(d, m));
-        virtualSize = history.size();
+        index++;
     }
 
     public Date undo() {
-        Pair pair = getUndo();
+        if (index < 0) {
+            return null;
+        }
+        Pair pair = history.get(index--);
         if (pair == null) {
             return null;
         }
@@ -44,27 +47,14 @@ public class History {
     }
 
     public Date redo() {
-        Pair pair = getRedo();
+        if (index >= history.size() - 1) {
+            return null;
+        }
+        Pair pair = history.get(++index);
         if (pair == null) {
             return null;
         }
         pair.getMemento().restore();
         return pair.getDate();
-    }
-    
-    private Pair getUndo() {
-        if (virtualSize == 0) {
-            return null;
-        }
-        virtualSize = Math.max(0, virtualSize - 1);
-        return history.get(virtualSize);
-    }
-
-    private Pair getRedo() {
-        if (virtualSize == history.size()) {
-            return null;
-        }
-        virtualSize = Math.min(history.size(), virtualSize + 1);
-        return history.get(virtualSize - 1);
     }
 }
