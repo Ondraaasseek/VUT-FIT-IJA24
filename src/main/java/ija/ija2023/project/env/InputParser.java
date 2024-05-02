@@ -83,7 +83,9 @@ public class InputParser {
         // Create obstacle
         if (parts[0].equals("O")) {
             // Create obstacle
-            room.createObstacleAt(y, x);
+            if (!room.createObstacleAt(y, x)) {
+                throw new Exception("Failed to create obstacle at " + x + " " + y);
+            }
             objectType = "obstacle";
         }
 

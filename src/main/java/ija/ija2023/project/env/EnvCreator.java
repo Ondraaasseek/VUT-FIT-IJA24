@@ -194,7 +194,10 @@ public class EnvCreator {
 
             private void createObstacleAt(int row, int col){
                 // Add obstacle to the room
-                room.createObstacleAt(row, col);
+                if (!room.createObstacleAt(row, col)) {
+                    System.out.println("ERROR Failed to create obstacle at " + col + " " + row);
+                    return;
+                }
 
                 // Draw obstacle
                 Rectangle obstacle = new Rectangle(scale, scale);
