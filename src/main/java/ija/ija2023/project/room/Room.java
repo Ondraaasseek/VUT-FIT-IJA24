@@ -258,6 +258,24 @@ public class Room implements Environment {
         return null;
     }
 
+    public AbstractRobot getRobotFromId(String id) {
+        // check if id is null
+        if (id == null) {
+            return null;
+        }
+        // check if id is empty
+        if (id.isEmpty()) {
+            return null;
+        }
+        // check if robot is in the list of robots
+        for(AbstractRobot robot : robots) {
+            if (robot.getId().equals(id)) {
+                return robot;
+            }
+        }
+        return null;
+    }
+
     /**
      * Get number of rows of the room
      * @return number of rows

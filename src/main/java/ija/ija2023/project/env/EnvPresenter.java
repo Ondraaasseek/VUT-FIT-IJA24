@@ -7,6 +7,9 @@ package ija.ija2023.project.env;
 
 import ija.ija2023.project.common.Position;
 import ija.ija2023.project.common.robot.AbstractRobot;
+import ija.ija2023.project.env.history.History;
+import ija.ija2023.project.env.history.Memento;
+import ija.ija2023.project.env.history.SceneSnapshot;
 import ija.ija2023.project.room.AutonomousRobot;
 import ija.ija2023.project.room.ControlledRobot;
 import ija.ija2023.project.room.Room;
@@ -23,6 +26,8 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -41,10 +46,15 @@ public class EnvPresenter {
     static int scale = 100;
     static Room room;
     static Group controlledRobotModel;
+    static List<Group> robotModels = new java.util.ArrayList<Group>();
+    static History history;
+    static int speed;
 
     public static void start(Room roomInput, Stage beforeStage) {
         // Set the class variables
         room = roomInput;
+        history = new History();
+        speed = 2;
 
         // Title of the window
         Stage presenterStage = new Stage();
@@ -79,20 +89,73 @@ public class EnvPresenter {
         // Add buttons to the control panel
         controlPanelGridPane.add(leftButton, 0, 0);
         controlPanelGridPane.add(forwardButton, 1, 0);
-        controlPanelGridPane.add(rightButton, 2, 0);        
+        controlPanelGridPane.add(rightButton, 2, 0); 
+        
+        
+
+
+
+
+        // button for saving the scene
+        Button saveSceneButton = new Button("Save Scene");
+        saveSceneButton.setOnAction(e -> {
+            // get sys date
+            Date date = new Date();
+            // create new memento
+            Memento memento = new Memento();
+            // save the scene
+            history.push(date, memento);
+        });
+
+        // button for restoring the scene
+        Button restoreSceneButton = new Button("Restore Scene");
+        restoreSceneButton.setOnAction(e -> {
+            Date date = history.undo();
+            //test print
+            System.out.println("INFO Scene restored from snapshot at time " + date);
+        });
+
+        // button for redo
+        Button redoButton = new Button("Redo");
+        redoButton.setOnAction(e -> {
+            Date date = history.redo();
+            //test print
+            System.out.println("INFO Scene restored from snapshot at time " + date);
+        });
+
+
+
+        // Add buttons to the control panel
+        controlPanelGridPane.add(saveSceneButton, 3, 0);
+        controlPanelGridPane.add(restoreSceneButton, 4, 0);
+        controlPanelGridPane.add(redoButton, 5, 0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Button for going back
         Button cancelButton = new Button("Cancel");
         cancelButton.setOnAction(cancelButtonHandler(presenterStage, beforeStage));
 
         // Button for ending the simulation
-        Button endButton = new Button("End live simulation");
-        endButton.setOnAction(e -> { presenterStage.close(); });
+        Button stopResumeButton = new Button("Stop simulation");
+        stopResumeButton.setOnAction(stopResumeButtonHandler(stopResumeButton));
         
         // Layout of the navigation buttons
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox buttonBox = new HBox(cancelButton, spacer, endButton);
+        HBox buttonBox = new HBox(cancelButton, spacer, stopResumeButton);
         buttonBox.setPadding(new Insets(10));
         
         // Layout of the room
@@ -121,18 +184,24 @@ public class EnvPresenter {
                 }
 
                 // Check if there is a robot
-                if (room.robotAt(new Position(y, x))) {
+                Position pos = new Position(y, x);
+                if (room.robotAt(pos)) {
                     // Get the robot from room
-                    AbstractRobot robot = room.getRobotFromPosition(new Position(y, x));
+                    AbstractRobot robot = room.getRobotFromPosition(pos);
 
                     // Draw robot
                     Group robotModel = EnvCreator.drawRobotModel(scale, robot instanceof ControlledRobot);
+                    String robotId = pos.hashCode() + "";
+                    robotModel.setId(robotId);
                     robotModel.setLayoutX(roomOffsetX+scale*x+scale/2);
                     robotModel.setLayoutY(scale*y+scale/2);
                     robotModel.setRotate(robot.getAngle());
 
                     // Add robot to the scene
                     roomGroup.getChildren().add(robotModel);
+
+                    // insert robot into list
+                    robotModels.add(robotModel);
 
                     // Check if the robot is controlled
                     if (robot instanceof ControlledRobot) {
@@ -162,7 +231,7 @@ public class EnvPresenter {
 
                         // Forward timer init
                         AnimationTimer forwardAutonomousTimer = forwardAutonomousRobotAnimationTimer(robotModel, roomGroup, roomOffsetX, width, height, rotationAutonomousTimer);
-                        
+
                         // Start the autonomous robot
                         forwardAutonomousTimer.start();
                         continue;
@@ -187,7 +256,14 @@ public class EnvPresenter {
         return new AnimationTimer() {
             @Override
             public void handle(long now) {
-                robot.setRotate(robot.getRotate() + 2*direction);
+                // get robot from room by robotId
+                AbstractRobot robotFromRoom = room.getRobotFromId(robot.getId());
+                
+                // rotate the robot in the room
+                robotFromRoom.setAngle((int) robot.getRotate());
+
+                // rotate the robot in the scene
+                robot.setRotate(robot.getRotate() + speed*direction);
             }
         };
     }
@@ -198,8 +274,8 @@ public class EnvPresenter {
             public void handle(long now) {
                 double angle = robot.getRotate();
                 // Calculate new position
-                double newX = robot.getLayoutX() + Math.cos(Math.toRadians(angle)) * 2;
-                double newY = robot.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2;
+                double newX = robot.getLayoutX() + Math.cos(Math.toRadians(angle)) * speed;
+                double newY = robot.getLayoutY() + Math.sin(Math.toRadians(angle)) * speed;
 
                 // Check if new position is within floor boundaries
                 boolean collisionDetected = !(newX - (double) scale / 2 + 6 >= roomOffsetX && newX + (double) scale / 2 - 6 <= roomOffsetX + scale * width && newY - (double) scale / 2 + 6 >= 0 && newY + (double) scale / 2 - 6 <= scale * height);
@@ -251,6 +327,13 @@ public class EnvPresenter {
 
                 // If no collision detected, update position
                 if (!collisionDetected) {
+                    // get robot from room by robotId
+                    AbstractRobot robotFromRoom = room.getRobotFromId(robot.getId());
+
+                    // move the robot in the room
+                    robotFromRoom.setPixelPosition(newX, newY);
+
+                    // move the robot in the scene
                     robot.setLayoutX(newX);
                     robot.setLayoutY(newY);
                 }
@@ -265,8 +348,8 @@ public class EnvPresenter {
                 rotationAutonomousTimer.stop();
                 double angle = robot.getRotate();
                 // Calculate new position
-                double newX = robot.getLayoutX() + Math.cos(Math.toRadians(angle)) * 2;
-                double newY = robot.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2;
+                double newX = robot.getLayoutX() + Math.cos(Math.toRadians(angle)) * speed;
+                double newY = robot.getLayoutY() + Math.sin(Math.toRadians(angle)) * speed;
 
                 // Check if new position is within floor boundaries
                 boolean collisionDetected = !(newX - (double) scale / 2 + 6 >= roomOffsetX && newX + (double) scale / 2 - 6 <= roomOffsetX + scale * width && newY - (double) scale / 2 + 6 >= 0 && newY + (double) scale / 2 - 6 <= scale * height);
@@ -324,9 +407,15 @@ public class EnvPresenter {
 
                 // If no collision detected, update position
                 if (!collisionDetected) {
+                    // get robot from room by robotId
+                    AbstractRobot robotFromRoom = room.getRobotFromId(robot.getId());
+
+                    // move the robot in the room
+                    robotFromRoom.setPixelPosition(newX, newY);
+
+                    // move the robot in the scene
                     robot.setLayoutX(newX);
                     robot.setLayoutY(newY);
-                    
                 }
             }
         };
@@ -373,6 +462,51 @@ public class EnvPresenter {
                 beforeStage.show();
             }
         };
+    }
+
+    private static EventHandler<ActionEvent> stopResumeButtonHandler(Button button) {
+        return new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (Objects.equals(button.getText(), "Stop simulation")) {
+                    button.setText("Resume simulation");
+                    speed = 0;
+                    // System log
+                    System.out.println("INFO Simulation stopped");
+                } else {
+                    button.setText("Stop simulation");
+                    speed = 2;
+                    // System log
+                    System.out.println("INFO Simulation resumed");
+                }
+            }
+        };
+    }
+
+    public static SceneSnapshot backup() {
+        return new SceneSnapshot(room.robots());
+    }
+
+    public static void restore(SceneSnapshot sceneSnapshot) {
+        // for each robot in the snapshot
+        for (AbstractRobot robot : sceneSnapshot.robots) {
+            // change position to room
+            for (AbstractRobot roomRobot : room.robots()) {
+                if (roomRobot.getId().equals(robot.getId())) {
+                    roomRobot.setPixelPosition(robot.getPixelPosition().getX(), robot.getPixelPosition().getY());
+                    roomRobot.setAngle(robot.getAngle());
+                }
+            }
+            
+            // change position to robotModels
+            for (Group robotModel : robotModels) {
+                if (robotModel.getId().equals(robot.getId())) {
+                    robotModel.setLayoutX(robot.getPixelPosition().getX());
+                    robotModel.setLayoutY(robot.getPixelPosition().getY());
+                    robotModel.setRotate(robot.getAngle());
+                }
+            }
+        }
     }
 }
 

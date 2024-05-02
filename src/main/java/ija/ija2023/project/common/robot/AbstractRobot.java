@@ -1,6 +1,7 @@
 package ija.ija2023.project.common.robot;
 
 import ija.ija2023.project.common.Environment;
+import ija.ija2023.project.common.PixelPosition;
 import ija.ija2023.project.common.Position;
 
 /**
@@ -15,7 +16,9 @@ import ija.ija2023.project.common.Position;
 public abstract class AbstractRobot implements Robot{
     protected Environment env;
     protected Position pos;
+    protected PixelPosition pixelPos;
     protected int angle;
+    protected String id;
 
     /**
      * Constructor for AbstractRobot
@@ -26,7 +29,31 @@ public abstract class AbstractRobot implements Robot{
         // initialize environment, position and angle
         this.env = env;
         this.pos = pos;
+        this.pixelPos = new PixelPosition(0, 0);
         this.angle = 0;
+        this.id = pos.hashCode() + "";
+    }
+
+    /**
+     * Constructor for AbstractRobot
+     * @param id robot id
+     * @param angle angle
+     * @param pixelPos PixelPosition
+     */
+    public AbstractRobot(String id, int angle, PixelPosition pixelPos) {
+        // initialize robot id, angle and pixel position
+        this.id = id;
+        this.angle = angle;
+        this.pixelPos = pixelPos;
+    }
+
+    /**
+     * Get robot id
+     * @return
+     */
+    public String getId() {
+        // return robot id
+        return this.id;
     }
 
     /**
@@ -39,12 +66,39 @@ public abstract class AbstractRobot implements Robot{
     }
 
     /**
+     * Set angle of the robot
+     * @param angle angle
+     */
+    public void setAngle(int angle) {
+        // set angle
+        this.angle = angle;
+    }
+
+    /**
      * Get position of the robot
      * @return
      */
     public Position getPosition() {
         // return current position
         return this.pos;
+    }
+
+    /**
+     * Get pixel position of the robot
+     * @return
+     */
+    public PixelPosition getPixelPosition() {
+        // return current pixel position
+        return this.pixelPos;
+    }
+
+    /**
+     * Set pixel position of the robot
+     * @param x x coordinate
+     * @param y y coordinate
+     */
+    public void setPixelPosition(double x, double y) {
+        this.pixelPos = new PixelPosition(y, x);
     }
 
     /**
