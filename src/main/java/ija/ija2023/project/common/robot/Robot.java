@@ -7,9 +7,34 @@ package ija.ija2023.project.common.robot;
 
 import ija.ija2023.project.common.Position;
 
+/**
+ * Interface for Robot
+ *
+ * @version 1.0
+ * @since 2024-05-02
+ *
+ * @see Position
+ */
 public interface Robot {
+
+    /**
+     * Rotate the robot by 45 degrees to the right
+     */
     void turn();
+
+    /**
+     * Rotate the robot by n*45 degrees to the right
+     * @param n number of 45 degrees rotations
+     */
     void turn(int n);
+
+    /**
+     * Get robots angle
+     */
     int getAngle();
+
+    /**
+     * Get robots position
+     */
     Position getPosition();
 }

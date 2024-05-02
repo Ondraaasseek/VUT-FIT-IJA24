@@ -25,8 +25,18 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
 
+/**
+ * Class for the window for creating elements inside the room and placing them
+ *
+ * @version 1.0
+ * @since 2024-05-02
+ *
+ * @see Stage
+ * @see Room
+ * @see EnvPresenter
+ */
 public class EnvCreator {
-    static String lastClickedButton[] = {"obstacle"};
+    static String[] lastClickedButton = {"obstacle"};
     static boolean controlledRobotAdded = false;
     static int scale = 100;
     static Room room;
@@ -304,6 +314,17 @@ public class EnvCreator {
     public static Group drawRobotModel(int scale) {
         return drawRobotModel(scale, false);
     }
+
+    /**
+     * Function for drawing the robot model in the scene
+     *
+     * @param scale Scale of the robot model
+     *              (size of the robot model is scale x scale)
+     * @param controlledRobot Boolean value if the robot is controlled
+     *                        (true if the robot is controlled, false if the robot is autonomous)
+     *
+     * @return Group of the robot model
+     */
     public static Group drawRobotModel(int scale, Boolean controlledRobot) {
         // Create robot model
         Group robotModel = new Group();

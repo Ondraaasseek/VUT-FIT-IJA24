@@ -9,4 +9,7 @@ module IJA{
 
     opens ija.ija2023.project to javafx.fxml;
     exports ija.ija2023.project.env to javafx.graphics;
+    exports ija.ija2023.project.room to javafx.graphics;
+    exports ija.ija2023.project.common to javafx.graphics;
+    exports ija.ija2023.project.common.robot to javafx.graphics;
 }

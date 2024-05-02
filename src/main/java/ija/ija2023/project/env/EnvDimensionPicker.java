@@ -22,6 +22,16 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
+/**
+ * Class for the window for selecting the dimensions of the room
+ *
+ * @version 1.0
+ * @since 2024-05-02
+ *
+ * @see Stage
+ * @see Room
+ * @see EnvCreator
+ */
 public class EnvDimensionPicker {
     public static void start(Stage beforeStage) {
         // Title of the window
@@ -117,9 +127,6 @@ public class EnvDimensionPicker {
                 Room room = null;
                 try {
                     room = Room.create(height, width);
-                    if (room == null) {
-                        throw new Exception("Room creation failed.");
-                    }
                 } catch (Exception ex) {
                     System.out.println("ERROR " + ex.getMessage());
                     return;

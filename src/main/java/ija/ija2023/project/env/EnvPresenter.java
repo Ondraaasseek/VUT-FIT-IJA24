@@ -25,6 +25,18 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
+/**
+ * Class for the environment presenter here user can see the environment and control the robot
+ * and watch the autonomous robots move and collide with obstacles
+ *
+ * @version 1.0
+ * @since 2024-05-02
+ * @see Stage
+ * @see Room
+ * @see Group
+ * @see AnimationTimer
+ * @see AbstractRobot
+ */
 public class EnvPresenter {
     static int scale = 100;
     static Room room;

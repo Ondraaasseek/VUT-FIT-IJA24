@@ -5,11 +5,30 @@ import ija.ija2023.project.common.robot.Robot;
 import ija.ija2023.project.common.robot.RobotFactory;
 import ija.ija2023.project.room.Room;
 
+
+/**
+ * Class for parsing the input file and creating the room with its objects (obstacles and robots)
+ *
+ * @version 1.0
+ * @since 2024-05-02
+ *
+ * @see Room
+ * @see Position
+ * @see Robot
+ * @see RobotFactory
+ */
 public class InputParser {
     static int numberOfLineParams = 3;
     static boolean controlledRobotAdded = false;
     static Room room = null;
 
+    /**
+     * Parse the input file and create the room with its objects
+     *
+     * @param content Content of the input file
+     * @return Room created from the input file
+     * @throws Exception If the input file is not valid
+     */
     public static Room parseInput(String content) throws Exception{
         // Split the content of the file into lines
         String[] lines = content.split("\n");
@@ -21,13 +40,10 @@ public class InputParser {
 
         // Create the room
         room = Room.create(height, width);
-        if (room == null) {
-            throw new Exception("Room creation failed.");
-        }
 
         // Parse the rest of the file
         for (int i = 1; i < lines.length; i++) {
-            parceLine(lines[i]);
+            parseLine(lines[i]);
         }
 
         // System log
@@ -37,7 +53,13 @@ public class InputParser {
         return room;
     }
 
-    private static void parceLine(String line) throws Exception{
+    /**
+     * Parse a single line of the input file
+     *
+     * @param line Line to parse
+     * @throws Exception If the line is not valid
+     */
+    private static void parseLine(String line) throws Exception{
         // Split the line into parts
         String[] parts = line.trim().split(";");
         if (parts.length != numberOfLineParams) {

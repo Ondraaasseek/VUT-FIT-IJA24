@@ -20,6 +20,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.IOException;
 
+/**
+ * Class for the main window of the application
+ *
+ * @version 1.0
+ * @since 2024-05-02
+ *
+ * @see Stage
+ * @see FileChooser
+ * @see EnvDimensionPicker
+ */
 public class EnvInput extends Application {
     @Override
     public void start(Stage primaryStage) {
