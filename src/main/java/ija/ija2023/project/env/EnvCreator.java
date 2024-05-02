@@ -32,13 +32,13 @@ public class EnvCreator {
     static Room room;
 
     public static void start(Room roomInput, Stage beforeStage) {
+        // Set the class variables
+        lastClickedButton[0] = "obstacle";
+        room = roomInput;
+
         // Title of the window
         Stage creatorStage = new Stage();
         creatorStage.setTitle("Room Creator");
-
-        // Set the last clicked button
-        lastClickedButton[0] = "obstacle";
-        room = roomInput;
 
         // Calculate window size
         int width = room.cols();
@@ -95,7 +95,7 @@ public class EnvCreator {
         GridPane roomGridPane = new GridPane();
         roomGridPane.setAlignment(Pos.CENTER);
 
-        // Draw the room
+        // Draw the room from the room object that was passed
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 // Draw floor
@@ -161,6 +161,12 @@ public class EnvCreator {
                 // Get row and column of the clicked floor
                 int row = GridPane.getRowIndex(floor);
                 int col = GridPane.getColumnIndex(floor);
+
+                // Check if there is an object in the room
+                if (room.obstacleAt(row, col) || room.robotAt(new Position(row, col))) {
+                    System.out.println("WARNING Position is already occupied at " + col + " " + row);
+                    return;
+                }
 
                 // Add desired object to the room
                 switch(lastClickedButton[0]) {
@@ -270,7 +276,7 @@ public class EnvCreator {
                     Robot.setRotate(Robot.getRotate() + 45);
 
                     // System log
-                    System.out.println("INFO Robot rotated 45 degrees counter clockwise at " + col + " " + row);
+                    System.out.println("INFO Robot rotated 45 degrees clockwise at " + col + " " + row);
                 }
                 if (event.getButton() == MouseButton.SECONDARY) {
                     // robot type

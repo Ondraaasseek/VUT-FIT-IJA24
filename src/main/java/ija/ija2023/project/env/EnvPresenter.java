@@ -11,6 +11,7 @@ import ija.ija2023.project.room.AutonomousRobot;
 import ija.ija2023.project.room.ControlledRobot;
 import ija.ija2023.project.room.Room;
 import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,68 +26,75 @@ import javafx.stage.Stage;
 import java.util.Objects;
 
 public class EnvPresenter {
-    public static void start(Room room, Stage beforeStage) {
-        // Based on the room create Stage with controls
-        if (room == null) {
-            throw new IllegalArgumentException("Room cannot be null");
-        }
+    static int scale = 100;
+    static Room room;
+    static Group controlledRobotModel;
+
+    public static void start(Room roomInput, Stage beforeStage) {
+        // Set the class variables
+        room = roomInput;
+
+        // Title of the window
+        Stage presenterStage = new Stage();
+        presenterStage.setTitle("Room Creator");
+
+        // Calculate window size
         int width = room.cols();
         int height = room.rows();
-        Stage primaryStage = new Stage();
-        BorderPane root = new BorderPane();
-
-        primaryStage.setTitle("Room Creator");
-
         int controlPanelWidth = 500;
         int ControlPanelHeight = 150;
-
-
-        int scale = 100;
         int sceneWidth = Math.max(scale * width, controlPanelWidth);
         int sceneHeight = scale * height + ControlPanelHeight;
+        
+        // Layout of the control panel
+        GridPane controlPanelGridPane = new GridPane();
+        controlPanelGridPane.setAlignment(Pos.CENTER);
+        controlPanelGridPane.setPrefSize(sceneWidth, ControlPanelHeight);
+        controlPanelGridPane.setHgap(10);
 
-        // Create buttons
-        GridPane createButtonsGridPane = new GridPane();
-        createButtonsGridPane.setPrefSize(sceneWidth, ControlPanelHeight);
-        createButtonsGridPane.setHgap(10);
+        // Button for turning left
         Button leftButton = new Button("<-");
+        
+
+        // Button for moving forward
         Button forwardButton = new Button("FORWARD");
         forwardButton.setPrefWidth(100);
+
+        // Button for turning right
         Button rightButton = new Button("->");
+        
 
-        createButtonsGridPane.add(leftButton, 0, 0);
-        createButtonsGridPane.add(forwardButton, 1, 0);
-        createButtonsGridPane.add(rightButton, 2, 0);
+        // Add buttons to the control panel
+        controlPanelGridPane.add(leftButton, 0, 0);
+        controlPanelGridPane.add(forwardButton, 1, 0);
+        controlPanelGridPane.add(rightButton, 2, 0);        
 
-        // align content to center of a pane
-        createButtonsGridPane.setAlignment(Pos.CENTER);
-
-        root.setCenter(createButtonsGridPane);
-
-        Button createButton = new Button("End live simulation");
-        createButton.setOnAction(e -> {
-            primaryStage.close();
-        });
+        // Button for going back
         Button cancelButton = new Button("Cancel");
-        cancelButton.setOnAction(e -> {
-            primaryStage.close();
-            beforeStage.show();
-        });
+        cancelButton.setOnAction(cancelButtonHandler(presenterStage, beforeStage));
+
+        // Button for ending the simulation
+        Button endButton = new Button("End live simulation");
+        endButton.setOnAction(e -> { presenterStage.close(); });
+        
+        // Layout of the navigation buttons
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox buttonBox = new HBox(cancelButton, spacer, createButton);
-        buttonBox.setPadding(new Insets(10, 10, 10, 10)); // Padding
-
-        root.setBottom(buttonBox);
-
+        HBox buttonBox = new HBox(cancelButton, spacer, endButton);
+        buttonBox.setPadding(new Insets(10));
+        
+        // Layout of the room
         Group roomGroup = new Group();
-        root.setTop(roomGroup);
         int roomOffsetX = (sceneWidth - scale * width) / 2;
+
         // Draw floor
         Rectangle floor = new Rectangle(roomOffsetX, 0, scale * width, scale * height);
         floor.setFill(javafx.scene.paint.Color.GRAY);
+
+        // Add floor to the scene
         roomGroup.getChildren().add(floor);
 
+        // Draw obstacles and robots
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 // Check if there is an obstacle
@@ -94,6 +102,7 @@ public class EnvPresenter {
                     // Draw obstacle
                     Rectangle obstacle = new Rectangle(roomOffsetX+scale*x, scale*y, scale, scale);
                     obstacle.setFill(javafx.scene.paint.Color.BLACK);
+
                     // Add obstacle to the scene
                     roomGroup.getChildren().add(obstacle);
                     continue;
@@ -101,225 +110,48 @@ public class EnvPresenter {
 
                 // Check if there is a robot
                 if (room.robotAt(new Position(y, x))) {
+                    // Get the robot from room
                     AbstractRobot robot = room.getRobotFromPosition(new Position(y, x));
+
+                    // Draw robot
+                    Group robotModel = EnvCreator.drawRobotModel(scale, robot instanceof ControlledRobot);
+                    robotModel.setLayoutX(roomOffsetX+scale*x+scale/2);
+                    robotModel.setLayoutY(scale*y+scale/2);
+                    robotModel.setRotate(robot.getAngle());
+
+                    // Add robot to the scene
+                    roomGroup.getChildren().add(robotModel);
+
+                    // Check if the robot is controlled
                     if (robot instanceof ControlledRobot) {
-                        // Draw robot
-                        Group robotModel = EnvCreator.drawRobotModel(scale, true);
-                        // Add robot to the scene on a specific position
-                        robotModel.setLayoutX(roomOffsetX+scale*x+scale/2);
-                        robotModel.setLayoutY(scale*y+scale/2);
-                        // get angle from robot in room
-                        robotModel.setRotate(robot.getAngle());
-                        roomGroup.getChildren().add(robotModel);
+                        // Set the controlled robot
+                        controlledRobotModel = robotModel;
 
-                        // rotate right button
-                        AnimationTimer rightButtonHoldTimer = new AnimationTimer() {
-                            @Override
-                            public void handle(long now) {
-                                robotModel.setRotate(robotModel.getRotate() + 2);
-                            }
-                        };
-                        rightButton.setOnMousePressed(new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent event) {
-                                rightButtonHoldTimer.start();
-                            }
-                        });
-                        rightButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent event) {
-                                rightButtonHoldTimer.stop();
-                            }
-                        });
+                        // left button init
+                        AnimationTimer leftRotationTimer = rotateRobotAnimationTimer(controlledRobotModel, -1);
+                        leftButton.setOnMousePressed(rotationButtonHandler(leftRotationTimer, true));
+                        leftButton.setOnMouseReleased(rotationButtonHandler(leftRotationTimer, false));
 
-                        // rotate left button
-                        AnimationTimer leftButtonHoldTimer = new AnimationTimer() {
-                            @Override
-                            public void handle(long now) {
-                                robotModel.setRotate(robotModel.getRotate() - 2);
-                            }
-                        };
-                        leftButton.setOnMousePressed(new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent event) {
-                                leftButtonHoldTimer.start();
-                            }
-                        });
-                        leftButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent event) {
-                                leftButtonHoldTimer.stop();
-                            }
-                        });
+                        // Forward button init
+                        AnimationTimer forwardButtonTimer = forwardRobotAnimationTimer(controlledRobotModel, roomGroup, roomOffsetX, width, height);
+                        forwardButton.setOnAction(forwardButtonHandler(forwardButton, forwardButtonTimer));
                         
-                        // forward button
-                        AnimationTimer forwardButtonTimer = new AnimationTimer() {
-                            @Override
-                            public void handle(long now) {
-                                double angle = robotModel.getRotate();
-                                // Calculate new position
-                                double newX = robotModel.getLayoutX() + Math.cos(Math.toRadians(angle)) * 2;
-                                double newY = robotModel.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2;
-
-                                // Check if new position is within floor boundaries
-                                boolean collisionDetected = !(newX - (double) scale / 2 + 6 >= roomOffsetX && newX + (double) scale / 2 - 6 <= roomOffsetX + scale * width && newY - (double) scale / 2 + 6 >= 0 && newY + (double) scale / 2 - 6 <= scale * height);
-
-                                // Check if new position is not colliding with obstacle
-                                for (int x = 0; x < width; x++) {
-                                    for (int y = 0; y < height; y++) {
-                                        if (room.obstacleAt(y, x)) {
-                                            // Calculate the center of the obstacle
-                                            double obstacleCenterX = roomOffsetX + scale * x + (double) scale / 2;
-                                            double obstacleCenterY = scale * y + (double) scale / 2;
-
-                                            // Calculate the distance from the center of the circle to the closest point in the square
-                                            double dx = Math.max(Math.max(obstacleCenterX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (obstacleCenterX + scale));
-                                            double dy = Math.max(Math.max(obstacleCenterY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (obstacleCenterY + scale));
-
-                                            // Check if the distance is less than the radius of the circle
-                                            double robotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
-                                            if (dx * dx + dy * dy < robotRadius * robotRadius) {
-                                                collisionDetected = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (collisionDetected) {
-                                        break;
-                                    }
-                                }
-
-                                // Check if the robot is colliding with another robot
-                                // Get all robots in the by the group
-                                for (int i = 0; i < roomGroup.getChildren().size(); i++) {
-                                    if (roomGroup.getChildren().get(i) instanceof Group) {
-                                        Group robotGroup = (Group) roomGroup.getChildren().get(i);
-                                        // Exclude the current robot from the collision detection
-                                        if (!robotGroup.equals(robotModel)) {
-                                            double otherRobotX = robotGroup.getLayoutX();
-                                            double otherRobotY = robotGroup.getLayoutY();
-                                            double otherRobotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
-                                            double dxOther = Math.max(Math.max(otherRobotX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (otherRobotX + scale));
-                                            double dyOther = Math.max(Math.max(otherRobotY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (otherRobotY + scale));
-                                            if (dxOther * dxOther + dyOther * dyOther < otherRobotRadius * otherRobotRadius) {
-                                                collisionDetected = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                // If no collision detected, update position
-                                if (!collisionDetected) {
-                                    robotModel.setLayoutX(newX);
-                                    robotModel.setLayoutY(newY);
-                                }
-                            }
-                        };
-                        forwardButton.setOnAction(e -> {
-                            if (Objects.equals(forwardButton.getText(), "FORWARD")) {
-                                forwardButton.setText("PAUSE");
-                                forwardButtonTimer.start();
-                                // System log
-                                System.out.println("INFO Controlled robot started moving forward");
-                            } else {
-                                forwardButton.setText("FORWARD");
-                                forwardButtonTimer.stop();
-                                // System log
-                                System.out.println("INFO Controlled robot paused");
-                            }
-                        });
+                        // Right button init
+                        AnimationTimer rightRotationTimer = rotateRobotAnimationTimer(controlledRobotModel, 1);
+                        rightButton.setOnMousePressed(rotationButtonHandler(rightRotationTimer, true));
+                        rightButton.setOnMouseReleased(rotationButtonHandler(rightRotationTimer, false));
                         continue;
                     }
+
+                    // Check if the robot is autonomous
                     if (robot instanceof AutonomousRobot) {
-                        // Draw robot
-                        Group robotModel = EnvCreator.drawRobotModel(scale);
-                        // Add robot to the scene on a specific position
-                        robotModel.setLayoutX(roomOffsetX+scale*x+scale/2);
-                        robotModel.setLayoutY(scale*y+scale/2);
-                        robotModel.setRotate(robot.getAngle());
-                        roomGroup.getChildren().add(robotModel);
+                        // Rotation timer init
+                        AnimationTimer rotationAutonomousTimer = rotateRobotAnimationTimer(robotModel, 1);
 
-                        // rotation motion
-                        AnimationTimer rotationAutonomousTimer = new AnimationTimer() {
-                            @Override
-                            public void handle(long now) {
-                                robotModel.setRotate(robotModel.getRotate() + 1);
-                            }
-                        };
-
-                        // forward motion
-                        AnimationTimer forwardAutonomousTimer = new AnimationTimer() {
-                            @Override
-                            public void handle(long now) {
-                                rotationAutonomousTimer.stop();
-                                double angle = robotModel.getRotate();
-                                // Calculate new position
-                                double newX = robotModel.getLayoutX() + Math.cos(Math.toRadians(angle)) * 2;
-                                double newY = robotModel.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2;
-
-                                // Check if new position is within floor boundaries
-                                boolean collisionDetected = !(newX - (double) scale / 2 + 6 >= roomOffsetX && newX + (double) scale / 2 - 6 <= roomOffsetX + scale * width && newY - (double) scale / 2 + 6 >= 0 && newY + (double) scale / 2 - 6 <= scale * height);
-
-                                // Check if new position is not colliding with obstacle
-                                for (int x = 0; x < width; x++) {
-                                    for (int y = 0; y < height; y++) {
-                                        if (room.obstacleAt(y, x)) {
-                                            // Calculate the center of the obstacle
-                                            double obstacleCenterX = roomOffsetX + scale * x + (double) scale / 2;
-                                            double obstacleCenterY = scale * y + (double) scale / 2;
-
-                                            // Calculate the distance from the center of the circle to the closest point in the square
-                                            double dx = Math.max(Math.max(obstacleCenterX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (obstacleCenterX + scale));
-                                            double dy = Math.max(Math.max(obstacleCenterY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (obstacleCenterY + scale));
-
-                                            // Check if the distance is less than the radius of the circle
-                                            double robotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
-                                            if (dx * dx + dy * dy < robotRadius * robotRadius) {
-                                                collisionDetected = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (collisionDetected) {
-                                        rotationAutonomousTimer.start();
-                                        break;
-                                    }
-                                }
-
-                                // Check if the robot is colliding with another robot
-                                // Get all robots in the by the group
-                                for (int i = 0; i < roomGroup.getChildren().size(); i++) {
-                                    if (roomGroup.getChildren().get(i) instanceof Group) {
-                                        Group robotGroup = (Group) roomGroup.getChildren().get(i);
-                                        // Exclude the current robot from the collision detection
-                                        if (!robotGroup.equals(robotModel)) {
-                                            double otherRobotX = robotGroup.getLayoutX();
-                                            double otherRobotY = robotGroup.getLayoutY();
-                                            double otherRobotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
-                                            double dxOther = Math.max(Math.max(otherRobotX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (otherRobotX + scale));
-                                            double dyOther = Math.max(Math.max(otherRobotY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (otherRobotY + scale));
-                                            if (dxOther * dxOther + dyOther * dyOther < otherRobotRadius * otherRobotRadius) {
-                                                collisionDetected = true;
-                                                rotationAutonomousTimer.start();
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (collisionDetected) {
-                                        rotationAutonomousTimer.start();
-                                        break;
-                                    }
-                                }
-
-                                // If no collision detected, update position
-                                if (!collisionDetected) {
-                                    robotModel.setLayoutX(newX);
-                                    robotModel.setLayoutY(newY);
-                                    
-                                }
-                            }
-                        };
+                        // Forward timer init
+                        AnimationTimer forwardAutonomousTimer = forwardAutonomousRobotAnimationTimer(robotModel, roomGroup, roomOffsetX, width, height, rotationAutonomousTimer);
+                        
+                        // Start the autonomous robot
                         forwardAutonomousTimer.start();
                         continue;
                     }
@@ -327,10 +159,208 @@ public class EnvPresenter {
             }
         }
 
+        // Layout of the window
+        BorderPane root = new BorderPane();
+        root.setTop(roomGroup);
+        root.setCenter(controlPanelGridPane);
+        root.setBottom(buttonBox);
         Scene scene = new Scene(root, sceneWidth, sceneHeight);
 
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        // Show the window
+        presenterStage.setScene(scene);
+        presenterStage.show();
+    }
+
+    private static AnimationTimer rotateRobotAnimationTimer(Group robot, int direction) {
+        return new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                robot.setRotate(robot.getRotate() + 2*direction);
+            }
+        };
+    }
+
+    private static AnimationTimer forwardRobotAnimationTimer(Group robot, Group roomGroup, int roomOffsetX, int width, int height) {
+        return new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                double angle = robot.getRotate();
+                // Calculate new position
+                double newX = robot.getLayoutX() + Math.cos(Math.toRadians(angle)) * 2;
+                double newY = robot.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2;
+
+                // Check if new position is within floor boundaries
+                boolean collisionDetected = !(newX - (double) scale / 2 + 6 >= roomOffsetX && newX + (double) scale / 2 - 6 <= roomOffsetX + scale * width && newY - (double) scale / 2 + 6 >= 0 && newY + (double) scale / 2 - 6 <= scale * height);
+
+                // Check if new position is not colliding with obstacle
+                for (int x = 0; x < width; x++) {
+                    for (int y = 0; y < height; y++) {
+                        if (room.obstacleAt(y, x)) {
+                            // Calculate the center of the obstacle
+                            double obstacleCenterX = roomOffsetX + scale * x + (double) scale / 2;
+                            double obstacleCenterY = scale * y + (double) scale / 2;
+
+                            // Calculate the distance from the center of the circle to the closest point in the square
+                            double dx = Math.max(Math.max(obstacleCenterX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (obstacleCenterX + scale));
+                            double dy = Math.max(Math.max(obstacleCenterY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (obstacleCenterY + scale));
+
+                            // Check if the distance is less than the radius of the circle
+                            double robotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
+                            if (dx * dx + dy * dy < robotRadius * robotRadius) {
+                                collisionDetected = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (collisionDetected) {
+                        break;
+                    }
+                }
+
+                // Check if the robot is colliding with another robot
+                // Get all robots in the by the group
+                for (int i = 0; i < roomGroup.getChildren().size(); i++) {
+                    if (roomGroup.getChildren().get(i) instanceof Group) {
+                        Group robotGroup = (Group) roomGroup.getChildren().get(i);
+                        // Exclude the current robot from the collision detection
+                        if (!robotGroup.equals(robot)) {
+                            double otherRobotX = robotGroup.getLayoutX();
+                            double otherRobotY = robotGroup.getLayoutY();
+                            double otherRobotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
+                            double dxOther = Math.max(Math.max(otherRobotX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (otherRobotX + scale));
+                            double dyOther = Math.max(Math.max(otherRobotY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (otherRobotY + scale));
+                            if (dxOther * dxOther + dyOther * dyOther < otherRobotRadius * otherRobotRadius) {
+                                collisionDetected = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // If no collision detected, update position
+                if (!collisionDetected) {
+                    robot.setLayoutX(newX);
+                    robot.setLayoutY(newY);
+                }
+            }
+        };
+    }
+
+    private static AnimationTimer forwardAutonomousRobotAnimationTimer(Group robot, Group roomGroup, int roomOffsetX, int width, int height, AnimationTimer rotationAutonomousTimer) {
+        return new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                rotationAutonomousTimer.stop();
+                double angle = robot.getRotate();
+                // Calculate new position
+                double newX = robot.getLayoutX() + Math.cos(Math.toRadians(angle)) * 2;
+                double newY = robot.getLayoutY() + Math.sin(Math.toRadians(angle)) * 2;
+
+                // Check if new position is within floor boundaries
+                boolean collisionDetected = !(newX - (double) scale / 2 + 6 >= roomOffsetX && newX + (double) scale / 2 - 6 <= roomOffsetX + scale * width && newY - (double) scale / 2 + 6 >= 0 && newY + (double) scale / 2 - 6 <= scale * height);
+
+                // Check if new position is not colliding with obstacle
+                for (int x = 0; x < width; x++) {
+                    for (int y = 0; y < height; y++) {
+                        if (room.obstacleAt(y, x)) {
+                            // Calculate the center of the obstacle
+                            double obstacleCenterX = roomOffsetX + scale * x + (double) scale / 2;
+                            double obstacleCenterY = scale * y + (double) scale / 2;
+
+                            // Calculate the distance from the center of the circle to the closest point in the square
+                            double dx = Math.max(Math.max(obstacleCenterX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (obstacleCenterX + scale));
+                            double dy = Math.max(Math.max(obstacleCenterY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (obstacleCenterY + scale));
+
+                            // Check if the distance is less than the radius of the circle
+                            double robotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
+                            if (dx * dx + dy * dy < robotRadius * robotRadius) {
+                                collisionDetected = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (collisionDetected) {
+                        rotationAutonomousTimer.start();
+                        break;
+                    }
+                }
+
+                // Check if the robot is colliding with another robot
+                // Get all robots in the by the group
+                for (int i = 0; i < roomGroup.getChildren().size(); i++) {
+                    if (roomGroup.getChildren().get(i) instanceof Group) {
+                        Group robotGroup = (Group) roomGroup.getChildren().get(i);
+                        // Exclude the current robot from the collision detection
+                        if (!robotGroup.equals(robot)) {
+                            double otherRobotX = robotGroup.getLayoutX();
+                            double otherRobotY = robotGroup.getLayoutY();
+                            double otherRobotRadius = (double) scale / 2 - 6; // Adjust this value to change the robot's hitbox size
+                            double dxOther = Math.max(Math.max(otherRobotX - (newX + (double) scale / 2), 0), (newX + (double) scale / 2) - (otherRobotX + scale));
+                            double dyOther = Math.max(Math.max(otherRobotY - (newY + (double) scale / 2), 0), (newY + (double) scale / 2) - (otherRobotY + scale));
+                            if (dxOther * dxOther + dyOther * dyOther < otherRobotRadius * otherRobotRadius) {
+                                collisionDetected = true;
+                                rotationAutonomousTimer.start();
+                                break;
+                            }
+                        }
+                    }
+                    if (collisionDetected) {
+                        rotationAutonomousTimer.start();
+                        break;
+                    }
+                }
+
+                // If no collision detected, update position
+                if (!collisionDetected) {
+                    robot.setLayoutX(newX);
+                    robot.setLayoutY(newY);
+                    
+                }
+            }
+        };
+    }
+
+    private static EventHandler<MouseEvent> rotationButtonHandler(AnimationTimer timer, boolean startStop) {
+        return new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (startStop){
+                    timer.start();
+                } else {
+                    timer.stop();
+                }
+            }
+        };
+    }
+
+    private static EventHandler<ActionEvent> forwardButtonHandler(Button button, AnimationTimer timer) {
+        return new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (Objects.equals(button.getText(), "FORWARD")) {
+                    button.setText("PAUSE");
+                    timer.start();
+                    // System log
+                    System.out.println("INFO Controlled robot started moving forward");
+                } else {
+                    button.setText("FORWARD");
+                    timer.stop();
+                    // System log
+                    System.out.println("INFO Controlled robot paused");
+                }
+            }
+        };
+    }
+
+    private static EventHandler<ActionEvent> cancelButtonHandler(Stage primaryStage, Stage beforeStage) {
+        return new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Move to the previous window
+                primaryStage.close();
+                beforeStage.show();
+            }
+        };
     }
 }
 

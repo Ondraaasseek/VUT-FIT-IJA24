@@ -76,6 +76,9 @@ public class EnvInput extends Application {
                 Room room = null;
                 try {
                     room = InputParser.parseInput(content);
+                    if (room == null) {
+                        throw new Exception("Room creation failed.");
+                    }
                 } catch (Exception ex) {
                     System.out.println("ERROR " + ex.getMessage());
                     return;
