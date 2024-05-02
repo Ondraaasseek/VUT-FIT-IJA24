@@ -57,4 +57,16 @@ public class History {
         pair.getMemento().restore();
         return pair.getDate();
     }
+
+    public int size() {
+        return history.size();
+    }
+
+    public void removeAfter(int index) {
+        if (index < 0 || index >= history.size()) {
+            return;
+        }
+        history = history.subList(0, index + 1);
+        this.index = index;
+    }
 }

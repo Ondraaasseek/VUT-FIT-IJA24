@@ -14,6 +14,10 @@ import ija.ija2023.project.room.AutonomousRobot;
 import ija.ija2023.project.room.ControlledRobot;
 import ija.ija2023.project.room.Room;
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -21,13 +25,18 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
+import java.text.BreakIterator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -49,6 +58,10 @@ public class EnvPresenter {
     static List<Group> robotModels = new java.util.ArrayList<Group>();
     static History history;
     static int speed;
+    static GridPane controlPanelGridPane;
+    static GridPane simulationPanelGridPane;
+    static Slider scenePicker;
+    static Timeline timeline;
 
     public static void start(Room roomInput, Stage beforeStage) {
         // Set the class variables
@@ -69,7 +82,7 @@ public class EnvPresenter {
         int sceneHeight = scale * height + ControlPanelHeight;
         
         // Layout of the control panel
-        GridPane controlPanelGridPane = new GridPane();
+        controlPanelGridPane = new GridPane();
         controlPanelGridPane.setAlignment(Pos.CENTER);
         controlPanelGridPane.setPrefSize(sceneWidth, ControlPanelHeight);
         controlPanelGridPane.setHgap(10);
@@ -89,60 +102,23 @@ public class EnvPresenter {
         // Add buttons to the control panel
         controlPanelGridPane.add(leftButton, 0, 0);
         controlPanelGridPane.add(forwardButton, 1, 0);
-        controlPanelGridPane.add(rightButton, 2, 0); 
-        
-        
+        controlPanelGridPane.add(rightButton, 2, 0);
 
 
+        // Create simulationControlPanel and hide it so it can be displayed when Live simulation is stopped
+        simulationPanelGridPane = new GridPane();
 
+        scenePicker = new Slider(1, history.size(), history.size());
+        scenePicker.setShowTickMarks(true);
 
-        // button for saving the scene
-        Button saveSceneButton = new Button("Save Scene");
-        saveSceneButton.setOnAction(e -> {
-            // get sys date
-            Date date = new Date();
-            // create new memento
-            Memento memento = new Memento();
-            // save the scene
-            history.push(date, memento);
-        });
+        simulationPanelGridPane.add(scenePicker, 0, 0);
 
-        // button for restoring the scene
-        Button restoreSceneButton = new Button("Restore Scene");
-        restoreSceneButton.setOnAction(e -> {
-            Date date = history.undo();
-            //test print
-            System.out.println("INFO Scene restored from snapshot at time " + date);
-        });
+        simulationPanelGridPane.setPrefSize(20 * history.size(), 100);
+        simulationPanelGridPane.setAlignment(Pos.CENTER);
+        simulationPanelGridPane.setVisible(false);
 
-        // button for redo
-        Button redoButton = new Button("Redo");
-        redoButton.setOnAction(e -> {
-            Date date = history.redo();
-            //test print
-            System.out.println("INFO Scene restored from snapshot at time " + date);
-        });
-
-
-
-        // Add buttons to the control panel
-        controlPanelGridPane.add(saveSceneButton, 3, 0);
-        controlPanelGridPane.add(restoreSceneButton, 4, 0);
-        controlPanelGridPane.add(redoButton, 5, 0);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        StackPane centerPane = new StackPane();
+        centerPane.getChildren().addAll(controlPanelGridPane, simulationPanelGridPane);
 
         // Button for going back
         Button cancelButton = new Button("Cancel");
@@ -168,6 +144,30 @@ public class EnvPresenter {
 
         // Add floor to the scene
         roomGroup.getChildren().add(floor);
+
+        scenePicker.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                int oldRounded = (int) Math.round(old_val.doubleValue());
+                int newRounded = (int) Math.round(new_val.doubleValue());
+                // if the text on the stopResumeButton is "Stop simulation" then the simulation is running
+                // So just skip the restore
+                if (Objects.equals("Stop simulation", stopResumeButton.getText())) {
+                    return;
+                }
+
+
+                // Based on the value of the slider, restore the scene to the selected state
+                if (newRounded > oldRounded) {
+                    for (int i = oldRounded; i < newRounded; i++) {
+                        history.redo();
+                    }
+                } else {
+                    for (int i = oldRounded; i > newRounded; i--) {
+                        history.undo();
+                    }
+                }
+            }
+        });
 
         // Draw obstacles and robots
         for (int x = 0; x < width; x++) {
@@ -240,16 +240,30 @@ public class EnvPresenter {
             }
         }
 
+        // Create a new Timeline
+        timeline = new Timeline(new KeyFrame(Duration.seconds(0.54444445), e -> {
+            // get sys date
+            Date date = new Date();
+            // create new memento
+            Memento memento = new Memento();
+            // save the scene
+            history.push(date, memento);
+        }));
+
+        // Set the cycle count for the Timeline
+        timeline.setCycleCount(Timeline.INDEFINITE);
+
         // Layout of the window
         BorderPane root = new BorderPane();
         root.setTop(roomGroup);
-        root.setCenter(controlPanelGridPane);
+        root.setCenter(centerPane);
         root.setBottom(buttonBox);
         Scene scene = new Scene(root, sceneWidth, sceneHeight);
 
         // Show the window
         presenterStage.setScene(scene);
         presenterStage.show();
+        timeline.play();
     }
 
     private static AnimationTimer rotateRobotAnimationTimer(Group robot, int direction) {
@@ -470,12 +484,28 @@ public class EnvPresenter {
             public void handle(ActionEvent event) {
                 if (Objects.equals(button.getText(), "Stop simulation")) {
                     button.setText("Resume simulation");
+                    timeline.stop();
                     speed = 0;
+                    // Close control panel for controlled robot
+                    controlPanelGridPane.setVisible(false);
+                    // Open control panel for simulation control
+                    System.out.println(history.size());
+                    scenePicker.setMax(history.size());
+                    scenePicker.setValue(history.size());
+                    scenePicker.setPrefWidth(2 * history.size());
+                    // Create a HBox to hold the labels
+                    simulationPanelGridPane.setVisible(true);
                     // System log
                     System.out.println("INFO Simulation stopped");
                 } else {
                     button.setText("Stop simulation");
+                    history.removeAfter((int) scenePicker.getValue());
+                    timeline.play();
                     speed = 2;
+                    // Close control panel for simulation control
+                    simulationPanelGridPane.setVisible(false);
+                    // Open control panel for controlled robot
+                    controlPanelGridPane.setVisible(true);
                     // System log
                     System.out.println("INFO Simulation resumed");
                 }
