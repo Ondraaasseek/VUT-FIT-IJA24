@@ -259,6 +259,11 @@ public class Room implements Environment {
         return null;
     }
 
+    /**
+     * Get robot from the specified id
+     * @param id robot id
+     * @return robot with the id or null if there is no robot
+     */
     public AbstractRobot getRobotFromId(String id) {
         // check if id is null
         if (id == null) {

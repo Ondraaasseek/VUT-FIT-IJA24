@@ -59,11 +59,19 @@ public class Position {
         return this.row == p.row && this.col == p.col;
     }
 
+    /**
+     * Get hash code of the position
+     * @return Hash code of the position
+     */
     @Override
     public int hashCode() {
         return this.row * 31 + this.col;
     }
 
+    /**
+     * Get string representation of the position
+     * @return String representation of the position
+     */
     @Override
     public String toString() {
         return "Position[" + this.row + ", " + this.col + "]";

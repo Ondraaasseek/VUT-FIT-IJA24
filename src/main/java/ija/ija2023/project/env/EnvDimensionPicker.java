@@ -32,13 +32,18 @@ import javafx.event.EventHandler;
  * Class for the window for selecting the dimensions of the room
  *
  * @version 1.0
- * @since 2024-05-02
+ * @since 2024-05-01
  *
  * @see Stage
  * @see Room
  * @see EnvCreator
  */
 public class EnvDimensionPicker {
+
+    /**
+     * Function for starting the window
+     * @param beforeStage Stage of the previous window
+     */
     public static void start(Stage beforeStage) {
         // Title of the window
         Stage dimensionStage = new Stage();
@@ -95,6 +100,12 @@ public class EnvDimensionPicker {
         dimensionStage.show();   
     }
 
+    /**
+     * Function for handling the cancel button
+     * @param primaryStage Stage of the current window
+     * @param beforeStage Stage of the previous window
+     * @return EventHandler for the button
+     */
     private static EventHandler<ActionEvent> cancelButtonHandler(Stage primaryStage, Stage beforeStage) {
         return new EventHandler<ActionEvent>() {
             @Override
@@ -106,6 +117,13 @@ public class EnvDimensionPicker {
         };
     }
 
+    /**
+     * Function for handling the create button
+     * @param primaryStage Stage of the current window
+     * @param widthField TextField for the width
+     * @param heightField TextField for the height
+     * @return EventHandler for the button
+     */
     private static EventHandler<ActionEvent> createButtonHandler(Stage primaryStage, TextField widthField, TextField heightField) {
         return new EventHandler<ActionEvent>() {
             @Override
@@ -145,6 +163,11 @@ public class EnvDimensionPicker {
         };
     }
 
+    /**
+     * Function for handling the focus of the input fields
+     * @param field TextField to handle
+     * @return ChangeListener for the field
+     */
     private static ChangeListener<Boolean> fieldFocusListener(TextField field) {
         return new ChangeListener<Boolean>() {
             @Override

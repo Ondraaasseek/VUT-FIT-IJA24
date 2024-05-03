@@ -42,7 +42,7 @@ import java.util.Objects;
  * and watch the autonomous robots move and collide with obstacles
  *
  * @version 1.0
- * @since 2024-05-02
+ * @since 2024-05-01
  * @see Stage
  * @see Room
  * @see Group
@@ -64,6 +64,11 @@ public class EnvPresenter {
     static Timeline forwardSimulationTimeline;
     static Timeline backwardSimulationTimeline;
 
+    /**
+     * Function for starting the window
+     * @param roomInput Room to be displayed
+     * @param beforeStage Stage of the previous window
+     */
     public static void start(Room roomInput, Stage beforeStage) {
         // Set the class variables
         room = roomInput;
@@ -310,6 +315,11 @@ public class EnvPresenter {
         timeline.play();
     }
 
+    /**
+     * Function for creating a new Timeline for the simulation
+     * @param direction Direction of the simulation
+     * @return New Timeline
+     */
     private static Timeline simulationTimeline(int direction) {
         return new Timeline(new KeyFrame(Duration.seconds(animationFrameInterval), e -> {
             int value = (int) scenePicker.getValue();
@@ -321,6 +331,12 @@ public class EnvPresenter {
         }));
     }
 
+    /**
+     * Function for creating a new AnimationTimer for rotating the robot
+     * @param robot Robot to be rotated
+     * @param direction Direction of the rotation
+     * @return New AnimationTimer
+     */
     private static AnimationTimer rotateRobotAnimationTimer(Group robot, int direction) {
         return new AnimationTimer() {
             @Override
@@ -337,6 +353,15 @@ public class EnvPresenter {
         };
     }
 
+    /**
+     * Function for creating a new AnimationTimer for moving the robot forward
+     * @param robot Robot to be moved
+     * @param roomGroup Group of the room
+     * @param roomOffsetX Offset of the room
+     * @param width Width of the room
+     * @param height Height of the room
+     * @return New AnimationTimer
+     */
     private static AnimationTimer forwardRobotAnimationTimer(Group robot, Group roomGroup, int roomOffsetX, int width, int height) {
         return new AnimationTimer() {
             @Override
@@ -410,6 +435,16 @@ public class EnvPresenter {
         };
     }
 
+    /**
+     * Function for creating a new AnimationTimer for moving the autonomous robot forward
+     * @param robot Robot to be moved
+     * @param roomGroup Group of the room
+     * @param roomOffsetX Offset of the room
+     * @param width Width of the room
+     * @param height Height of the room
+     * @param rotationAutonomousTimer Timer for rotating the autonomous robot
+     * @return New AnimationTimer
+     */
     private static AnimationTimer forwardAutonomousRobotAnimationTimer(Group robot, Group roomGroup, int roomOffsetX, int width, int height, AnimationTimer rotationAutonomousTimer) {
         return new AnimationTimer() {
             @Override
@@ -490,6 +525,12 @@ public class EnvPresenter {
         };
     }
 
+    /**
+     * Function for handling the rotation button
+     * @param timer Timer to be started or stopped
+     * @param startStop True if the timer should be started, false if the timer should be stopped
+     * @return New EventHandler
+     */
     private static EventHandler<MouseEvent> rotationButtonHandler(AnimationTimer timer, boolean startStop) {
         return new EventHandler<MouseEvent>() {
             @Override
@@ -503,6 +544,12 @@ public class EnvPresenter {
         };
     }
 
+    /**
+     * Function for handling the forward button
+     * @param button Button to be updated
+     * @param timer Timer to be started or stopped
+     * @return New EventHandler
+     */
     private static EventHandler<ActionEvent> forwardButtonHandler(Button button, AnimationTimer timer) {
         return new EventHandler<ActionEvent>() {
             @Override
@@ -522,6 +569,12 @@ public class EnvPresenter {
         };
     }
 
+    /**
+     * Function for handling the cancel button
+     * @param primaryStage Stage of the current window
+     * @param beforeStage Stage of the previous window
+     * @return EventHandler for the button
+     */
     private static EventHandler<ActionEvent> cancelButtonHandler(Stage primaryStage, Stage beforeStage) {
         return new EventHandler<ActionEvent>() {
             @Override
@@ -533,6 +586,11 @@ public class EnvPresenter {
         };
     }
 
+    /**
+     * Function for handling the stop/resume button
+     * @param button Button to be updated
+     * @return EventHandler for the button
+     */
     private static EventHandler<ActionEvent> stopResumeButtonHandler(Button button) {
         return new EventHandler<ActionEvent>() {
             @Override
@@ -568,10 +626,18 @@ public class EnvPresenter {
         };
     }
 
+    /**
+     * Function for creating a snapshot of the current scene
+     * @return New SceneSnapshot
+     */
     public static SceneSnapshot backup() {
         return new SceneSnapshot(room.robots());
     }
 
+    /**
+     * Function for restoring the scene from the snapshot
+     * @param sceneSnapshot Snapshot to be restored
+     */
     public static void restore(SceneSnapshot sceneSnapshot) {
         // for each robot in the snapshot
         for (AbstractRobot robot : sceneSnapshot.robots) {

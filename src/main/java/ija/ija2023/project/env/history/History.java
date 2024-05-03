@@ -10,10 +10,24 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for History
+ *
+ * @version 1.0
+ * @since 2024-05-02
+ */
 public class History {
     private List<Pair> history = new ArrayList<Pair>();
     private int index = -1;
 
+    /**
+     * Pair class for History
+     * @version 1.0
+     * @since 2024-05-02
+     * 
+     * @see Date
+     * @see Memento
+     */
     private class Pair {
         // date and time of a memento
         Date date;
@@ -32,6 +46,11 @@ public class History {
         }
     }
 
+    /**
+     * Push a new memento to the history
+     * @param d Date
+     * @param m Memento
+     */
     public void push(Date d, Memento m) {
         if (index < history.size() - 1) {
             history = history.subList(0, index + 1);
@@ -40,6 +59,10 @@ public class History {
         index++;
     }
 
+    /**
+     * Restore previous memento
+     * @return Date of the restored memento
+     */
     public Date undo() {
         if (index < 0) {
             return null;
@@ -52,6 +75,10 @@ public class History {
         return pair.getDate();
     }
 
+    /**
+     * Restore next memento
+     * @return Date of the restored memento
+     */
     public Date redo() {
         if (index >= history.size() - 1) {
             return null;
@@ -64,10 +91,18 @@ public class History {
         return pair.getDate();
     }
 
+    /**
+     * Get size of the history
+     * @return Size of the history
+     */
     public int size() {
         return history.size();
     }
 
+    /**
+     * Remove all mementos after the given index
+     * @param index Index
+     */
     public void removeAfter(int index) {
         if (index < 0 || index >= history.size()) {
             return;

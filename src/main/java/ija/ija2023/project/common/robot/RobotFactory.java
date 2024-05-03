@@ -22,6 +22,13 @@ import ija.ija2023.project.room.ControlledRobot;
  * @see Position
  */
 public class RobotFactory {
+    /**
+     * Create robot in the environment at the specified position with the
+     * default control type (autonomous)
+     * @param env Environment
+     * @param pos Position
+     * @return Robot or null if the robot could not be created
+     */
     public static AbstractRobot create(Environment env, Position pos) {
         return create(env, pos, false);
     }

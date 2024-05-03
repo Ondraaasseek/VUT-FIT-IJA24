@@ -42,7 +42,7 @@ import javafx.scene.control.Button;
  * Class for the window for creating elements inside the room and placing them
  *
  * @version 1.0
- * @since 2024-05-02
+ * @since 2024-04-30
  *
  * @see Stage
  * @see Room
@@ -54,6 +54,11 @@ public class EnvCreator {
     static int scale = 100;
     static Room room;
 
+    /**
+     * Function for starting the window
+     * @param roomInput Room object
+     * @param beforeStage Stage of the previous window
+     */
     public static void start(Room roomInput, Stage beforeStage) {
         // Set the class variables
         lastClickedButton[0] = "obstacle";
@@ -179,6 +184,12 @@ public class EnvCreator {
         creatorStage.show();
     }
 
+    /**
+     * Function for creating the object handler
+     * @param floor Rectangle of the floor
+     * @param roomGridPane GridPane of the room
+     * @return EventHandler for creating object
+     */
     private static EventHandler<MouseEvent> createObjectHandler(Rectangle floor, GridPane roomGridPane) {
         return new EventHandler<MouseEvent>() {
             @Override
@@ -259,6 +270,12 @@ public class EnvCreator {
         };
     }
 
+    /**
+     * Function for removing the obstacle handler
+     * @param Obstacle Rectangle of the obstacle
+     * @param roomGridPane GridPane of the room
+     * @return EventHandler for removing obstacle
+     */
     private static EventHandler<MouseEvent> removeObstacleHandler(Rectangle Obstacle, GridPane roomGridPane) {
         return new EventHandler<MouseEvent>() {
             @Override
@@ -288,6 +305,12 @@ public class EnvCreator {
         };
     }
 
+    /**
+     * Function for clicking the robot handler
+     * @param Robot Group of the robot
+     * @param roomGridPane GridPane of the room
+     * @return EventHandler for clicking the robot
+     */
     private static EventHandler<MouseEvent> clickRobotHandler(Group Robot, GridPane roomGridPane) {
         return new EventHandler<MouseEvent>() {
             @Override
@@ -332,6 +355,14 @@ public class EnvCreator {
         };
     }
 
+    /**
+     * Function for drawing the robot model in the scene
+     *
+     * @param scale Scale of the robot model
+     *              (size of the robot model is scale x scale)
+     *
+     * @return Group of the robot model
+     */
     public static Group drawRobotModel(int scale) {
         return drawRobotModel(scale, false);
     }
@@ -365,6 +396,12 @@ public class EnvCreator {
         return robotModel;
     }
 
+    /**
+     * Function for handling the cancel button
+     * @param primaryStage Stage of the current window
+     * @param beforeStage Stage of the previous window
+     * @return EventHandler for the cancel button
+     */
     private static EventHandler<ActionEvent> cancelButtonHandler(Stage primaryStage, Stage beforeStage) {
         return new EventHandler<ActionEvent>() {
             @Override
@@ -376,6 +413,11 @@ public class EnvCreator {
         };
     }
 
+    /**
+     * Function for handling the export button
+     * @param primaryStage Stage of the current window
+     * @return EventHandler for the export button
+     */
     private static EventHandler<ActionEvent> exportButtonHandler(Stage primaryStage) {
         return new EventHandler<ActionEvent>() {
             @Override
@@ -414,6 +456,11 @@ public class EnvCreator {
         };
     }
 
+    /**
+     * Function for handling the create button
+     * @param primaryStage Stage of the current window
+     * @return EventHandler for the create button
+     */
     private static EventHandler<ActionEvent> createButtonHandler(Stage primaryStage) {
         return new EventHandler<ActionEvent>() {
             @Override

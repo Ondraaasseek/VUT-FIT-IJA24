@@ -12,9 +12,23 @@ import ija.ija2023.project.common.robot.AbstractRobot;
 import ija.ija2023.project.room.ControlledRobot;
 import ija.ija2023.project.room.AutonomousRobot;
 
+/**
+ * Class for SceneSnapshot
+ * 
+ * @version 1.0
+ * @since 2024-05-02
+ * 
+ * @see AbstractRobot
+ * @see ControlledRobot
+ * @see AutonomousRobot
+ */
 public class SceneSnapshot {
     public List<AbstractRobot> robots = new java.util.ArrayList<AbstractRobot>();
 
+    /**
+     * Constructor for SceneSnapshot
+     * @param robots List of robots
+     */
     public SceneSnapshot(List<AbstractRobot> robots) {
         // for each robot in robots, create new robot and add it to the list
         for (AbstractRobot robot : robots) {

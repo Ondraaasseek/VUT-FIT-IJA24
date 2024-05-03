@@ -30,13 +30,18 @@ import java.io.IOException;
  * Class for the main window of the application
  *
  * @version 1.0
- * @since 2024-05-02
+ * @since 2024-04-28
  *
  * @see Stage
  * @see FileChooser
  * @see EnvDimensionPicker
  */
 public class EnvInput extends Application {
+
+    /**
+     * Function for starting the window
+     * @param primaryStage Stage of the window
+     */
     @Override
     public void start(Stage primaryStage) {
         // Title of the window
@@ -65,6 +70,11 @@ public class EnvInput extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Handler for the load button
+     * @param primaryStage Stage of the window
+     * @return EventHandler for the load button
+     */
     private static EventHandler<ActionEvent> loadButtonHandler(Stage primaryStage) {
         return new EventHandler<ActionEvent>() {
             @Override
@@ -107,6 +117,11 @@ public class EnvInput extends Application {
         };
     }
 
+    /**
+     * Handler for the create button
+     * @param primaryStage Stage of the window
+     * @return EventHandler for the create button
+     */
     private static EventHandler<ActionEvent> createButtonHandler(Stage primaryStage) {
         return new EventHandler<ActionEvent>() {
             @Override

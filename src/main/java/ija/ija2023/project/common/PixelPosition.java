@@ -6,6 +6,12 @@
 
 package ija.ija2023.project.common;
 
+/**
+ * Class for PixelPosition
+ *
+ * @version 1.0
+ * @since 2024-05-02
+ */
 public class PixelPosition {
     double y;
     double x;

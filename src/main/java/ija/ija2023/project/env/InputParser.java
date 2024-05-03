@@ -16,7 +16,7 @@ import ija.ija2023.project.room.Room;
  * Class for parsing the input file and creating the room with its objects (obstacles and robots)
  *
  * @version 1.0
- * @since 2024-05-02
+ * @since 2024-05-01
  *
  * @see Room
  * @see Position
