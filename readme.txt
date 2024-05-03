@@ -7,7 +7,7 @@ mvn clean install
 otevřít soubor target/Roboti-A-Kameny-1.0.jar
 
 # Na generování dokumentace
-javadoc -d doc -sourcepath src -subpackages .
+mvn javadoc:javadoc
 
 
 # Autoři
