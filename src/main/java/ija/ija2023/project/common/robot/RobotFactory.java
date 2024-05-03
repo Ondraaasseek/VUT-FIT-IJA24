@@ -1,10 +1,15 @@
+/** 
+ * @file RobotFactory.java
+ * @brief Class for RobotFactory
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.project.common.robot;
 
 import ija.ija2023.project.common.Environment;
 import ija.ija2023.project.common.Position;
 import ija.ija2023.project.room.AutonomousRobot;
 import ija.ija2023.project.room.ControlledRobot;
-import javafx.scene.image.PixelBuffer;
 
 /**
  * Class for RobotFactory

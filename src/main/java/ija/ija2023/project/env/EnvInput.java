@@ -1,3 +1,9 @@
+/** 
+ * @file EnvInput.java
+ * @brief Class for the main window of the application
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.project.env;
 
 import ija.ija2023.project.room.Room;

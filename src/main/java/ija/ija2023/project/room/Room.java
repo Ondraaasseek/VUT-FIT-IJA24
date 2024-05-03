@@ -1,5 +1,6 @@
-/* @file Room.java
- * @brief Class for Environment
+/** 
+ * @file Room.java
+ * @brief Class for Room
  * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
  */
 

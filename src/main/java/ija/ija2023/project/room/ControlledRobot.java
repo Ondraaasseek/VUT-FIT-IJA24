@@ -1,6 +1,7 @@
-/* @file ControlledRobot.java
+/** 
+ * @file ControlledRobot.java
  * @brief Class for ControlledRobot
- * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
  */
 
 package ija.ija2023.project.room;

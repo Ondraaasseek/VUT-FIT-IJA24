@@ -1,3 +1,9 @@
+/** 
+ * @file module-info.java
+ * @brief Module info for IJA project
+ * @author Ondřej Novotný (xnovot2p)
+ */
+
 module IJA{
     requires javafx.controls;
     requires javafx.fxml;

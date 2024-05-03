@@ -1,3 +1,9 @@
+/** 
+ * @file History.java
+ * @brief Class for History
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.project.env.history;
 
 import java.util.Date;

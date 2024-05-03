@@ -1,5 +1,6 @@
-/* @file ControlledRobot.java
- * @brief Class for ControlledRobot
+/** 
+ * @file AutonomousRobot.java
+ * @brief Class for AutonomousRobot
  * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
  */
 

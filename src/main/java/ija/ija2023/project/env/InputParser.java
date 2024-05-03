@@ -1,3 +1,9 @@
+/** 
+ * @file InputParser.java
+ * @brief Class for InputParser
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.project.env;
 
 import ija.ija2023.project.common.Position;

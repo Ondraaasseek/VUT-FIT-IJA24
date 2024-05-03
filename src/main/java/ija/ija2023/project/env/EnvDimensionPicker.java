@@ -1,3 +1,9 @@
+/** 
+ * @file EnvDimensionPicker.java
+ * @brief Class for the window for selecting the dimensions of the room
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.project.env;
 
 import ija.ija2023.project.room.Room;

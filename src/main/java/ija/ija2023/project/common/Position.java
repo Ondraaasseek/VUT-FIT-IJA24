@@ -1,6 +1,7 @@
-/* @file Position.java
+/**
+ * @file Position.java
  * @brief Class for Position
- * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
  */
 
 package ija.ija2023.project.common;

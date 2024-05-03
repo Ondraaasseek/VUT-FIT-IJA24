@@ -1,3 +1,9 @@
+/** 
+ * @file PixelPosition.java
+ * @brief Class for PixelPosition
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.project.common;
 
 public class PixelPosition {

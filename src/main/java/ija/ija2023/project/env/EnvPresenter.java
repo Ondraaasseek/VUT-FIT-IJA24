@@ -1,6 +1,7 @@
-/* @file EnvPresenter.java
- * @brief Class for EnvPresenter
- * @autor Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+/** 
+ * @file EnvPresenter.java
+ * @brief Class for the environment presenter here user can see the environment and control the robot and watch the autonomous robots move and collide with obstacles
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
  */
 
 package ija.ija2023.project.env;
@@ -25,7 +26,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -33,10 +33,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.text.BreakIterator;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 /**

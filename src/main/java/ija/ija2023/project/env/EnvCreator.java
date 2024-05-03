@@ -1,3 +1,9 @@
+/** 
+ * @file EnvCreator.java
+ * @brief Class for the window for creating elements inside the room and placing them
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.project.env;
 
 import java.io.BufferedWriter;
@@ -5,7 +11,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import ija.ija2023.project.common.Position;
 import ija.ija2023.project.common.robot.AbstractRobot;

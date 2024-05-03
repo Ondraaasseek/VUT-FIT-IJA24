@@ -1,8 +1,12 @@
+/** 
+ * @file Main.java
+ * @brief Entry point to the application
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.project;
 
 import ija.ija2023.project.env.EnvInput;
-
-// Application entry point class initialization of the main window. and calling everything else.
 
 /**
  * Entry point to the application

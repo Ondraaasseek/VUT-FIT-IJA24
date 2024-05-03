@@ -1,3 +1,9 @@
+/** 
+ * @file SceneSnapshot.java
+ * @brief Class for SceneSnapshot
+ * @author Lukáš Katona (xkaton00) & Ondřej Novotný (xnovot2p)
+ */
+
 package ija.ija2023.project.env.history;
 
 import java.util.List;
