@@ -34,6 +34,12 @@ public interface Robot {
     int getAngle();
 
     /**
+     * Sets robots angle
+     * @param angle angle to set
+     */
+    void setAngle(int angle);
+
+    /**
      * Get robots position
      */
     Position getPosition();
