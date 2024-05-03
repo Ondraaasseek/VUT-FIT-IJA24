@@ -302,4 +302,45 @@ public class Room implements Environment {
         // return new list of robots
         return new java.util.ArrayList<AbstractRobot>(robots);
     }
+
+    /**
+     * Get room as a string
+     * @return room as a string
+     */
+    @Override
+    public String toString() {
+        // create new string builder
+        StringBuilder sb = new StringBuilder();
+
+        // add room dimensions to the string builder
+        sb.append(cols + ";" + rows + '\n');
+
+        // add room to the string builder
+        for (int y = 0; y < this.rows; y++) {
+            for (int x = 0; x < this.cols; x++) {
+                // Add obstacle to the string builder
+                if (room[y][x] == 'O') {
+                    sb.append("O;" + x + ';' + y + '\n');
+                }
+
+                // Add robot to the string builder
+                if (room[y][x] == 'R') {
+                    // Get robot from the position
+                    AbstractRobot robot = this.getRobotFromPosition(new Position(y, x));
+
+                    // Get robot type
+                    String robotType = robot instanceof ControlledRobot ? "CR" : "AR";
+
+                    // Add robot to the string builder
+                    int angle = robot.getAngle();
+                    angle = -angle;
+                    if (angle != 0) angle += 360;
+                    angle %= 360;
+                    sb.append(robotType + ";" + x + ';' + y + ';' + angle + '\n');
+                }
+            }
+        }
+        // return string builder as a string
+        return sb.toString();
+    }
 }

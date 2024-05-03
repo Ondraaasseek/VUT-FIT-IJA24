@@ -1,5 +1,12 @@
 package ija.ija2023.project.env;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import ija.ija2023.project.common.Position;
 import ija.ija2023.project.common.robot.AbstractRobot;
 import ija.ija2023.project.common.robot.RobotFactory;
@@ -13,6 +20,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -91,6 +99,10 @@ public class EnvCreator {
         Button cancelButton = new Button("Cancel");
         cancelButton.setOnAction(cancelButtonHandler(creatorStage, beforeStage));
 
+        // Button for exporting the environment
+        Button exportButton = new Button("Export");
+        exportButton.setOnAction(exportButtonHandler(creatorStage));
+
         // Button for creating the environment
         Button createButton = new Button("Create");
         createButton.setOnAction(createButtonHandler(creatorStage));
@@ -98,7 +110,7 @@ public class EnvCreator {
         // Layout of the navigation buttons
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox buttonBox = new HBox(cancelButton, spacer, createButton);
+        HBox buttonBox = new HBox(cancelButton, spacer, exportButton, createButton);
         buttonBox.setPadding(new Insets(10));
 
         // Layout of the room
@@ -139,6 +151,7 @@ public class EnvCreator {
                     // Draw robot
                     Group robotModel = drawRobotModel(scale, robot instanceof ControlledRobot);
                     robotModel.setOnMouseClicked(clickRobotHandler(robotModel, roomGridPane));
+                    robotModel.setRotate(robot.getAngle());
 
                     // Add robot to the scene
                     roomGridPane.add(robotModel, x, y);
@@ -354,6 +367,44 @@ public class EnvCreator {
                 // Move to the previous window
                 primaryStage.close();
                 beforeStage.show();
+            }
+        };
+    }
+
+    private static EventHandler<ActionEvent> exportButtonHandler(Stage primaryStage) {
+        return new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Get the room as a string
+                String export = room.toString();
+
+                // Export the room to a file
+                
+                FileChooser fileChooser = new FileChooser();
+
+                // Set extension filter
+                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
+                fileChooser.getExtensionFilters().add(extFilter);
+
+                // Set default file name
+                LocalDateTime date = LocalDateTime.now();
+                String exportFileName = "room_D" + date.toString().replace(" ", "_").replace(":", "-").replace("T", "_T").replace(".", "-") + ".csv";
+                fileChooser.setInitialFileName(exportFileName);
+
+                // Show save file dialog
+                File file = fileChooser.showSaveDialog(primaryStage);
+
+                if (file != null) {
+                    // Write to the file
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                        writer.write(export);
+                    } catch (IOException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+
+                // System log
+                System.out.println("INFO Room exported");
             }
         };
     }

@@ -62,7 +62,7 @@ public class InputParser {
     private static void parseLine(String line) throws Exception{
         // Split the line into parts
         String[] parts = line.trim().split(";");
-        if (parts.length != numberOfLineParams) {
+        if (parts.length < numberOfLineParams) {
             return;
         }
 
@@ -108,6 +108,11 @@ public class InputParser {
             if (robot == null) {
                 throw new Exception("Robot creation failed.");
             }
+
+            // Set robot angle
+            if (parts.length > numberOfLineParams) {
+                robot.setAngle(-Integer.parseInt(parts[3]));
+            }   
         }
 
         // System log
