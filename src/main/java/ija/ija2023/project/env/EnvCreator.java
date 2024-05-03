@@ -412,6 +412,8 @@ public class EnvCreator {
         Rectangle obstacleRect = new Rectangle(scale, scale);
         obstacleRect.setFill(Color.BLACK);
 
+        // Add all parts to the obstacle
+        obstacle.getChildren().addAll(obstacleRect);
         return obstacle;
     }
 
