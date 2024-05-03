@@ -23,6 +23,7 @@ import ija.ija2023.project.room.AutonomousRobot;
  * @see AutonomousRobot
  */
 public class SceneSnapshot {
+    /** List of robots */
     public List<AbstractRobot> robots = new java.util.ArrayList<AbstractRobot>();
 
     /**

@@ -31,6 +31,7 @@ public interface Robot {
 
     /**
      * Get robots angle
+     * @return angle
      */
     int getAngle();
 
@@ -42,6 +43,7 @@ public interface Robot {
 
     /**
      * Get robots position
+     * @return position
      */
     Position getPosition();
 }

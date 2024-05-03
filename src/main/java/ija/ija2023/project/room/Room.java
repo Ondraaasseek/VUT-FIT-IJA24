@@ -24,6 +24,7 @@ import ija.ija2023.project.common.robot.AbstractRobot;
 public class Room implements Environment {
     int rows;
     int cols;
+    /** Room */
     public char[][] room;
     List<AbstractRobot> robots = new java.util.ArrayList<AbstractRobot>();
 

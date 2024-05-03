@@ -20,10 +20,15 @@ import ija.ija2023.project.common.Position;
  * @see Position
  */
 public abstract class AbstractRobot implements Robot{
+    /** Environment */
     protected Environment env;
+    /** Position */
     protected Position pos;
+    /** Pixel position */
     protected PixelPosition pixelPos;
+    /** Angle */
     protected int angle;
+    /** Robot id */
     protected String id;
 
     /**
@@ -55,7 +60,7 @@ public abstract class AbstractRobot implements Robot{
 
     /**
      * Get robot id
-     * @return
+     * @return id
      */
     public String getId() {
         // return robot id
@@ -64,7 +69,7 @@ public abstract class AbstractRobot implements Robot{
 
     /**
      * Get angle of the robot
-     * @return
+     * @return angle
      */
     public int getAngle() {
         // return current angle
@@ -82,7 +87,7 @@ public abstract class AbstractRobot implements Robot{
 
     /**
      * Get position of the robot
-     * @return
+     * @return Position
      */
     public Position getPosition() {
         // return current position
@@ -91,7 +96,7 @@ public abstract class AbstractRobot implements Robot{
 
     /**
      * Get pixel position of the robot
-     * @return
+     * @return PixelPosition
      */
     public PixelPosition getPixelPosition() {
         // return current pixel position
