@@ -24,6 +24,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -34,6 +35,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
@@ -141,8 +143,7 @@ public class EnvCreator {
                 // Check if there is an obstacle
                 if (room.obstacleAt(y, x)) {
                     // Draw obstacle
-                    Rectangle obstacle = new Rectangle(scale, scale);
-                    obstacle.setFill(javafx.scene.paint.Color.BLACK);
+                    Group obstacle = drawObstacle(scale);
                     obstacle.setOnMouseClicked(removeObstacleHandler(obstacle, roomGridPane));
 
                     // Add obstacle to the scene
@@ -229,8 +230,7 @@ public class EnvCreator {
                 }
 
                 // Draw obstacle
-                Rectangle obstacle = new Rectangle(scale, scale);
-                obstacle.setFill(javafx.scene.paint.Color.BLACK);
+                Group obstacle = drawObstacle(scale);
                 obstacle.setOnMouseClicked(removeObstacleHandler(obstacle, roomGridPane));
 
                 // Add obstacle to the scene
@@ -276,7 +276,7 @@ public class EnvCreator {
      * @param roomGridPane GridPane of the room
      * @return EventHandler for removing obstacle
      */
-    private static EventHandler<MouseEvent> removeObstacleHandler(Rectangle Obstacle, GridPane roomGridPane) {
+    private static EventHandler<MouseEvent> removeObstacleHandler(Group Obstacle, GridPane roomGridPane) {
         return new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -394,6 +394,25 @@ public class EnvCreator {
         // Add all parts to the robot model
         robotModel.getChildren().addAll(head, eye);
         return robotModel;
+    }
+
+    /**
+     * Function for drawing the obstacle in the scene
+     *
+     * @param scale Scale of the obstacle
+     *              (size of the obstacle is scale x scale)
+     *
+     * @return Group of the obstacle
+     */
+    public static Group drawObstacle(int scale) {
+        // Create obstacle
+        Group obstacle = new Group();
+
+        // Draw obstacle
+        Rectangle obstacleRect = new Rectangle(scale, scale);
+        obstacleRect.setFill(Color.BLACK);
+
+        return obstacle;
     }
 
     /**
