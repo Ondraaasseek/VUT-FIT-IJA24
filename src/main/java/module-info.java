@@ -1,3 +1,4 @@
+/** Module info for JavaFX */
 module IJA{
     requires javafx.controls;
     requires javafx.fxml;
