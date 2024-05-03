@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"IJA","l":"ija.ija2023.project"},{"m":"IJA","l":"ija.ija2023.project.common"},{"m":"IJA","l":"ija.ija2023.project.common.robot"},{"m":"IJA","l":"ija.ija2023.project.env"},{"m":"IJA","l":"ija.ija2023.project.env.history"},{"m":"IJA","l":"ija.ija2023.project.room"}];updateSearchResults();
